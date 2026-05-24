@@ -7,77 +7,82 @@
   <link rel="icon" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* Tokens defined in CIKGUSYNC_REDESIGN.md §1.1.
+       No gradients, no shadows (except the bottom-nav top hairline). */
     :root,
     body[data-theme="light"] {
-      --cs-bg:          #F5F7FA;
-      --cs-bg2:         #EEF2F6;
-      --cs-bg3:         #E6ECF2;
-      --cs-card:        #FFFFFF;
-      --cs-card-elev:   #FFFFFF;
-      --cs-border:      #E2E7EE;
-      --cs-border-strong: #C9D2DC;
-      --cs-text:        #0F2A3D;
-      --cs-text-2:      #45607A;
-      --cs-text-3:      #7B8FA3;
-      --cs-navy:        #1F4E6D;
-      --cs-navy-dark:   #163A52;
-      --cs-navy-deep:   #0F2A3D;
-      --cs-navy-soft:   #E1ECF3;
-      --cs-teal:        #2EAAB0;
-      --cs-teal-dark:   #1F8A8F;
-      --cs-teal-soft:   #DEF3F3;
-      --cs-success:     #2C8C5F;
-      --cs-success-soft:#D9EFE3;
-      --cs-warn:        #B07A1A;
-      --cs-warn-soft:   #F7EBCD;
-      --cs-queue:       #C97E2A;
-      --cs-queue-soft:  #FAE7CE;
-      --cs-danger:      #B73B3B;
-      --cs-danger-soft: #F6D7D7;
-      --cs-shadow-1:    0 1px 2px rgba(15,42,61,0.05);
-      --cs-shadow-2:    0 6px 24px rgba(15,42,61,0.08);
-      --cs-shadow-3:    0 18px 56px rgba(15,42,61,0.12);
-      --cs-logo-shadow: 0 1px 4px rgba(15,42,61,0.12);
+      --navy-900:   #0B2A4A;
+      --navy-800:   #13325A;
+      --navy-700:   #1E4172;
+      --ink-900:    #0F172A;
+      --ink-700:    #334155;
+      --ink-500:    #64748B;
+      --ink-300:    #CBD5E1;
+      --line-200:   #E5E7EB;
+      --surface-0:  #FFFFFF;
+      --surface-50: #F7F8FA;
+      --surface-100:#F1F3F6;
+      --peach-500:  #E78A3C;
+      --peach-200:  #FCE3CB;
+      --peach-50:   #FFF6EC;
+      --green-600:  #1F8A5B;
+      --green-100:  #DCF1E5;
+      --red-500:    #D14343;
+      --red-100:    #FBE0E0;
+      /* Legacy aliases so any not-yet-migrated code keeps working visually.
+         Anything new should reference the spec names above. */
+      --cs-bg:       var(--surface-50);
+      --cs-bg2:      var(--surface-100);
+      --cs-bg3:      var(--surface-100);
+      --cs-card:     var(--surface-0);
+      --cs-card-elev:var(--surface-0);
+      --cs-border:   var(--line-200);
+      --cs-border-strong: var(--ink-300);
+      --cs-text:     var(--ink-900);
+      --cs-text-2:   var(--ink-700);
+      --cs-text-3:   var(--ink-500);
+      --cs-navy:     var(--navy-900);
+      --cs-navy-dark:var(--navy-800);
+      --cs-navy-deep:var(--navy-900);
+      --cs-navy-soft:#EAF0F8;
+      --cs-teal:     var(--navy-700);
+      --cs-teal-dark:var(--navy-800);
+      --cs-teal-soft:var(--surface-100);
+      --cs-success:  var(--green-600);
+      --cs-success-soft: var(--green-100);
+      --cs-warn:     var(--peach-500);
+      --cs-warn-soft:var(--peach-200);
+      --cs-queue:    var(--peach-500);
+      --cs-queue-soft: var(--peach-200);
+      --cs-danger:   var(--red-500);
+      --cs-danger-soft: var(--red-100);
+      /* Shadows neutralised per spec (only the bottom-nav hairline survives). */
+      --cs-shadow-1: none;
+      --cs-shadow-2: none;
+      --cs-shadow-3: none;
+      --cs-logo-shadow: none;
     }
+    /* Dim mode kept disabled by spec — single light theme. */
     body[data-theme="dim"] {
-      --cs-bg:          #0E1A24;
-      --cs-bg2:         #122230;
-      --cs-bg3:         #16293A;
-      --cs-card:        #18293A;
-      --cs-card-elev:   #1E3245;
-      --cs-border:      #25394C;
-      --cs-border-strong: #344A60;
-      --cs-text:        #E7EEF5;
-      --cs-text-2:      #B1C0CF;
-      --cs-text-3:      #7E94A9;
-      --cs-navy:        #4FA8D8;
-      --cs-navy-dark:   #2E89BC;
-      --cs-navy-deep:   #0B1622;
-      --cs-navy-soft:   rgba(79,168,216,0.18);
-      --cs-teal:        #3EC0C6;
-      --cs-teal-dark:   #2EAAB0;
-      --cs-teal-soft:   rgba(46,170,176,0.18);
-      --cs-success:     #4EBE84;
-      --cs-success-soft:rgba(78,190,132,0.20);
-      --cs-warn:        #E0AA45;
-      --cs-warn-soft:   rgba(224,170,69,0.20);
-      --cs-queue:       #E89A4B;
-      --cs-queue-soft:  rgba(232,154,75,0.20);
-      --cs-danger:      #DD6464;
-      --cs-danger-soft: rgba(221,100,100,0.20);
-      --cs-shadow-1:    0 1px 2px rgba(0,0,0,0.30);
-      --cs-shadow-2:    0 6px 24px rgba(0,0,0,0.45);
-      --cs-shadow-3:    0 18px 56px rgba(0,0,0,0.55);
-      --cs-logo-shadow: 0 1px 4px rgba(0,0,0,0.6);
+      --surface-50: #0E1A24;
+      --surface-0:  #14222F;
+      --surface-100:#1A2A38;
+      --line-200:   #25394C;
+      --ink-900:    #E7EEF5;
+      --ink-700:    #B1C0CF;
+      --ink-500:    #7E94A9;
+      --navy-900:   #4FA8D8;
+      --navy-800:   #2E89BC;
+      --navy-700:   #1B6BA0;
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body {
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      background: var(--cs-bg);
-      color: var(--cs-text);
+      font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--surface-50);
+      color: var(--ink-900);
       -webkit-font-smoothing: antialiased;
     }
     #root { min-height: 100vh; }
@@ -149,10 +154,10 @@
       }
       var files = [
         'theme.jsx',
-        'android-frame.jsx',
+        'components.jsx',
         'teacher.jsx',
-        'screens-extra.jsx',
         'teacher-detail.jsx',
+        'screens-extra.jsx',
         'leader.jsx',
         'district.jsx',
         'app.jsx',

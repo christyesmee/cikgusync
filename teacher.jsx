@@ -1,477 +1,312 @@
-// CikguSync - Teacher (Cikgu Liana) - Home, Modules, shared chrome
-const { useState, useEffect, useRef } = React;
+// CikguSync - Teacher screens (Figure 1 + Figure 2 panels).
+//
+// Each screen renders inside the PhoneShell + optional BottomNav. Spec §4.
 
 // -----------------------------------------------------------------------------
-const btnPrimary = {
-  background: T.navy, border: 'none', color: '#fff',
-  fontSize: 14, padding: '12px 18px', borderRadius: 12,
-  fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-  letterSpacing: 0.1,
-};
-const btnSecondary = {
-  ...btnPrimary, background: T.card, color: T.navy,
-  border: `1px solid ${T.borderS}`, fontWeight: 600,
-};
-const btnGhost = {
-  background: 'transparent', border: `1px solid ${T.borderS}`,
-  color: T.text2, fontSize: 11, padding: '6px 10px',
-  borderRadius: 999, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-};
-
+// 4.1 Welcome screen
 // -----------------------------------------------------------------------------
-function Header({ title, back, right, subtitle }) {
+function WelcomeScreen({ s, set, go }) {
+  const setLanguage = (lang) => {
+    set(p => ({ ...p, language: lang }));
+    try { localStorage.setItem('cs-language', lang); } catch (e) {}
+  };
+  const lang = s.language || 'EN';
   return (
-    <div style={{
-      padding: '14px 14px 12px', background: T.card,
-      borderBottom: `1px solid ${T.border}`,
-      display: 'flex', alignItems: 'center', gap: 10,
-    }}>
-      {back && (
-        <button onClick={back} style={{
-          width: 34, height: 34, border: 'none', background: T.surface2,
-          borderRadius: 11, cursor: 'pointer', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', color: T.text, flexShrink: 0,
-        }}><Icon name="chevL" size={18} /></button>
-      )}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: T.text, lineHeight: 1.2, letterSpacing: -0.1 }}>{title}</div>
-        {subtitle && <div style={{ fontSize: 11.5, color: T.text2, marginTop: 2 }}>{subtitle}</div>}
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px 20px' }}>
+      {/* 1. Logo block */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, marginTop: 32 }}>
+        <Logo size={88} brand />
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 22, lineHeight: '28px', fontWeight: 700, color: T.ink, letterSpacing: -0.3 }}>
+            CikguSync
+          </div>
+          <div style={{ fontSize: 13, fontWeight: 400, color: T.ink3, marginTop: 6 }}>
+            {tx(s, 'welcomeTagline')}
+          </div>
+        </div>
       </div>
-      {right}
-    </div>
-  );
-}
 
-// -----------------------------------------------------------------------------
-function BottomNav({ tab, setTab, s }) {
-  const items = [
-    { id: 'home',    label: tx(s, 'home'),    icon: 'home' },
-    { id: 'modules', label: tx(s, 'learn'),   icon: 'book' },
-    { id: 'capture', label: tx(s, 'add'),     icon: 'camera' },
-    { id: 'record',  label: tx(s, 'record'),  icon: 'record' },
-    { id: 'profile', label: tx(s, 'profile'), icon: 'user' },
-  ];
-  return (
-    <div style={{
-      display: 'flex', borderTop: `1px solid ${T.border}`,
-      background: T.card,
-    }}>
-      {items.map(it => {
-        const active = tab === it.id;
-        return (
-          <button key={it.id} onClick={() => setTab(it.id)} style={{
-            flex: 1, border: 'none', background: 'transparent',
-            padding: '10px 4px 12px', cursor: 'pointer',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            color: active ? T.navy : T.text3,
-            fontFamily: 'inherit', position: 'relative',
-          }}>
-            <Icon name={it.icon} size={20} stroke={active ? 2.2 : 1.7} />
-            <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, letterSpacing: 0.2 }}>{it.label}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-// Status pill - replaces the old banner
-function StatusPill({ s, set }) {
-  const queued = s.evidence.filter(e => !e.synced).length;
-  const online = s.online;
-  return (
-    <button onClick={() => set(p => ({ ...p, online: !p.online }))} style={{
-      border: `1px solid ${T.border}`, background: T.card,
-      padding: '6px 11px 6px 9px', borderRadius: 999, cursor: 'pointer',
-      display: 'inline-flex', alignItems: 'center', gap: 7,
-      fontFamily: 'inherit', boxShadow: T.shadow1,
-    }}>
-      <span style={{
-        width: 7, height: 7, borderRadius: '50%',
-        background: online ? T.success : T.queue,
-        boxShadow: `0 0 0 3px ${online ? T.successS : T.queueS}`,
-      }} />
-      <span style={{ fontSize: 11.5, fontWeight: 600, color: T.text }}>
-        {online ? tx(s, 'online') : tx(s, 'offline')}
-      </span>
-      {queued > 0 && (
-        <>
-          <span style={{ width: 2, height: 2, borderRadius: '50%', background: T.text3 }} />
-          <span style={{ fontSize: 11, color: T.text2, fontFamily: 'JetBrains Mono, monospace' }}>{queued} {tx(s, 'queued')}</span>
-        </>
-      )}
-    </button>
-  );
-}
-
-// -----------------------------------------------------------------------------
-function InfoPopover({ content, side = 'right' }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div style={{ position: 'relative', display: 'inline-flex' }}>
-      <button onClick={(e) => { e.stopPropagation(); setOpen(o => !o); }}
-        style={{
-          width: 22, height: 22, borderRadius: '50%',
-          border: 'none', background: T.surface2, color: T.text2,
-          cursor: 'pointer', fontFamily: 'inherit',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 12, fontWeight: 700,
-        }}>?</button>
-      {open && (
-        <>
-          <div onClick={() => setOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 20 }} />
-          <div style={{
-            position: 'absolute', top: 28,
-            [side]: 0,
-            width: 240, background: T.cardElev,
-            border: `1px solid ${T.borderS}`, borderRadius: 12, padding: 12,
-            boxShadow: T.shadow2,
-            fontSize: 12, color: T.text2, lineHeight: 1.5, zIndex: 21,
-          }}>{content}</div>
-        </>
-      )}
-    </div>
-  );
-}
-
-// -----------------------------------------------------------------------------
-function DomainTile({ code, count }) {
-  const active = count > 0;
-  return (
-    <div style={{
-      background: active ? `linear-gradient(135deg, ${T.navy}, ${T.tealDark})` : T.surface2,
-      color: active ? '#fff' : T.text3,
-      borderRadius: 12, padding: '12px 6px', textAlign: 'center',
-      transition: 'transform 0.15s',
-    }}>
-      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700, opacity: 0.85, letterSpacing: 0.3 }}>{code}</div>
-      <div style={{ fontSize: 22, fontWeight: 700, lineHeight: 1, marginTop: 5, letterSpacing: -0.5 }}>{count}</div>
-    </div>
-  );
-}
-
-// -----------------------------------------------------------------------------
-function MiniModuleRow({ mod, onOpen, s }) {
-  const subtitle = mod.state === 'downloaded' ? tx(s, 'onPhoneReady')
-                : mod.state === 'completed'   ? tx(s, 'completedReview')
-                : mod.state === 'downloading' ? `${(mod.progress*100).toFixed(0)}%`
-                : `${mod.sizeMB.toFixed(0)} MB - ${tx(s, 'tapToDownload')}`;
-  return (
-    <button onClick={onOpen} style={{
-      background: T.card, border: `1px solid ${T.border}`,
-      borderRadius: 14, padding: 12, cursor: 'pointer', fontFamily: 'inherit',
-      display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left',
-      boxShadow: T.shadow1,
-    }}>
-      <div style={{
-        width: 40, height: 40, borderRadius: 11, flexShrink: 0,
-        background: `linear-gradient(135deg, ${T.navy}, ${T.teal})`,
-        color: '#fff', fontFamily: 'JetBrains Mono, monospace',
-        fontSize: 12, fontWeight: 700,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>{mod.domain}</div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13.5, fontWeight: 700, color: T.text, lineHeight: 1.3,
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{moduleTitle(mod, s)}</div>
-        <div style={{ fontSize: 11.5, color: T.text2, marginTop: 3 }}>{subtitle}</div>
+      {/* 2. Heart tagline row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 24 }}>
+        <Icon name="heart" size={16} color={T.ink2} />
+        <span style={{ fontSize: 14, fontWeight: 500, color: T.ink2 }}>{tx(s, 'welcomeSub')}</span>
       </div>
-      <Icon name="chevR" size={16} color={T.text3} />
-    </button>
+
+      {/* 3. CHOOSE YOUR LANGUAGE label + 4. picker */}
+      <div style={{ marginTop: 32 }}>
+        <div style={{ ...TYPE.eyebrow, marginBottom: 12 }}>
+          {tx(s, 'chooseLanguage')}
+        </div>
+        <SegmentedLanguagePicker value={lang} onChange={setLanguage} />
+      </div>
+
+      {/* 5. Status callout */}
+      <div style={{ marginTop: 24 }}>
+        <CalloutCard
+          tone={s.online ? 'green' : 'peach'}
+          icon={s.online ? 'cloud' : 'cloudOff'}
+          title={s.online ? tx(s, 'youreOnline') : tx(s, 'youreOffline')}
+          body={s.online ? tx(s, 'goodTimeToDownload') : tx(s, 'waitingForConnection')}
+        />
+      </div>
+
+      {/* spacer */}
+      <div style={{ flex: 1, minHeight: 16 }} />
+
+      {/* 6. Primary CTA */}
+      <PrimaryButton onClick={() => go('home')}>{tx(s, 'start')}</PrimaryButton>
+
+      {/* 7. Text link */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+        <TextLink onClick={() => {}}>{tx(s, 'howItWorks')}</TextLink>
+      </div>
+    </div>
   );
 }
 
+// -----------------------------------------------------------------------------
+// 4.2 Home
 // -----------------------------------------------------------------------------
 function HomeScreen({ s, set, go }) {
   const queued = s.evidence.filter(e => !e.synced).length;
-  const totalEv = s.evidence.length;
-  const evidenceByDomain = SGM_DOMAINS.map(d => ({ ...d, n: s.evidence.filter(e => e.domain === d.id).length }));
-  const continueModule = s.modules.find(m => m.state === 'downloaded');
-  const incomplete = s.modules.filter(m => m.state !== 'completed' && m.state !== 'downloaded');
+  const downloaded = s.modules.filter(m => m.state === 'downloaded' || m.state === 'completed').length;
+  const completed = 0; // demo seed - none completed this week
+  const cont = s.modules.filter(m => m.state === 'downloaded');
 
   return (
-    <div style={{ padding: '20px 18px 28px', display: 'flex', flexDirection: 'column', gap: 18 }}>
-      {/* Greeting + status pill */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-        <div>
-          <div style={{ fontSize: 13, color: T.text2, fontWeight: 500 }}>{tx(s, 'goodMorning')}</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: T.text, lineHeight: 1.1, marginTop: 4, letterSpacing: -0.5 }}>
-            Cikgu Liana
-          </div>
-        </div>
-        <StatusPill s={s} set={set} />
-      </div>
-
-      {/* Continue learning hero */}
-      {continueModule && (
-        <button onClick={() => { set(p => ({ ...p, openModule: continueModule.id })); go('module'); }}
-          style={{
-            background: `linear-gradient(135deg, ${T.navy} 0%, ${T.tealDark} 100%)`,
-            color: '#fff', border: 'none', borderRadius: 18, padding: 20,
-            textAlign: 'left', cursor: 'pointer', position: 'relative', overflow: 'hidden',
-            fontFamily: 'inherit', boxShadow: T.shadow2,
-          }}>
-          <div style={{ position: 'absolute', right: -30, top: -40, width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
-          <div style={{ position: 'absolute', right: 40, bottom: -50, width: 110, height: 110, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-          <div style={{ position: 'relative' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 0.7, opacity: 0.85, textTransform: 'uppercase' }}>
-              {tx(s, 'continue')} - {continueModule.id}
-            </div>
-            <div style={{ fontSize: 19, fontWeight: 700, marginTop: 8, lineHeight: 1.3, maxWidth: '85%' }}>
-              {moduleTitle(continueModule, s)}
-            </div>
-            <div style={{ fontSize: 12, opacity: 0.85, marginTop: 5 }}>
-              {tx(s, 'chapter')} 3 {tx(s, 'of')} {continueModule.chapters} - ~{Math.max(3, continueModule.durationMin - 18)} {tx(s, 'minLeft')}
-            </div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 16,
-              fontSize: 13, fontWeight: 700, background: 'rgba(255,255,255,0.18)',
-              padding: '8px 14px', borderRadius: 999, backdropFilter: 'blur(4px)' }}>
-              {tx(s, 'resume')} <Icon name="arrowR" size={14} stroke={2.4} />
-            </div>
-          </div>
-        </button>
-      )}
-
-      {/* Primary CTA: Add evidence */}
-      <button onClick={() => go('capture')} style={{
-        background: T.card, border: `1px solid ${T.border}`, borderRadius: 16,
-        padding: 14, textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit',
-        display: 'flex', alignItems: 'center', gap: 14, boxShadow: T.shadow1, width: '100%',
+    <>
+      {/* Special header: 28px navy tile + two-line text + online pill right */}
+      <div style={{
+        height: 64, display: 'flex', alignItems: 'center', gap: 10,
+        padding: '0 20px', borderBottom: `1px solid ${T.line}`, background: T.surface,
       }}>
         <div style={{
-          width: 46, height: 46, borderRadius: 13,
-          background: T.navy, color: '#fff', flexShrink: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}><Icon name="camera" size={20} stroke={2} /></div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{tx(s, 'addEvidence')}</div>
-          <div style={{ fontSize: 12, color: T.text2, marginTop: 2 }}>{tx(s, 'captureBlurTagReflect')}</div>
-        </div>
-        <Icon name="chevR" size={18} color={T.text3} />
-      </button>
-
-      {/* Sync queue card - only when there are queued items */}
-      {queued > 0 && (
-        <button onClick={() => go('sync')} style={{
-          background: T.card, border: `1px solid ${T.border}`, borderRadius: 16,
-          padding: 14, textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit',
-          display: 'flex', alignItems: 'center', gap: 14, boxShadow: T.shadow1, width: '100%',
+          width: 28, height: 28, borderRadius: 8,
+          background: T.navy, color: '#fff',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
-          <div style={{
-            width: 46, height: 46, borderRadius: 13,
-            background: T.queueS, color: T.queue, flexShrink: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}><Icon name="sync" size={20} stroke={2} /></div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{tx(s, 'syncQueueTitle')}</div>
-            <div style={{ fontSize: 12, color: T.text2, marginTop: 2 }}>
-              {queued} {queued === 1 ? tx(s, 'itemWaitingToSync') : tx(s, 'itemsWaitingToSync')}
-            </div>
-          </div>
-          <Icon name="chevR" size={18} color={T.text3} />
-        </button>
-      )}
-
-      {/* CPD record summary */}
-      <div style={{
-        background: T.card, border: `1px solid ${T.border}`,
-        borderRadius: 16, padding: 16, boxShadow: T.shadow1,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: T.text3, letterSpacing: 0.6, textTransform: 'uppercase' }}>
-              {tx(s, 'myRecord')}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 6 }}>
-              <span style={{ fontSize: 32, fontWeight: 800, color: T.text, lineHeight: 1, letterSpacing: -0.8 }}>{totalEv}</span>
-              <span style={{ fontSize: 12, color: T.text2 }}>{tx(s, 'thisCycle')}</span>
-            </div>
-          </div>
-          <button onClick={() => go('record')} style={{
-            background: 'transparent', border: 'none', color: T.navy,
-            fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-            display: 'flex', alignItems: 'center', gap: 4, padding: '4px 4px',
-          }}>{tx(s, 'viewRecord')} <Icon name="chevR" size={14} /></button>
+          <Icon name="bookOpen" size={16} />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-          {evidenceByDomain.map(d => <DomainTile key={d.id} code={d.code} count={d.n} />)}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: T.ink, lineHeight: '18px' }}>CikguSync</div>
+          <div style={{ fontSize: 11, fontWeight: 400, color: T.ink3, lineHeight: '14px' }}>{tx(s, 'welcomeTagline')}</div>
         </div>
+        <OnlinePill online={s.online} />
       </div>
 
-      {/* Pinned for you (only if incomplete modules exist) */}
-      {incomplete.length > 0 && (
+      <ScreenBody>
+        {/* Greeting */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2px 10px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{tx(s, 'pinnedForYou')}</div>
-            <button onClick={() => go('modules')} style={{
-              background: 'transparent', border: 'none', color: T.navy,
-              fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-              display: 'flex', alignItems: 'center', gap: 4,
-            }}>{tx(s, 'seeAll')} <Icon name="chevR" size={12} /></button>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {incomplete.slice(0, 2).map(m => (
-              <MiniModuleRow key={m.id} mod={m} s={s}
-                onOpen={() => { set(p => ({ ...p, openModule: m.id })); go('module'); }} />
+          <div style={{ ...TYPE.pageTitle }}>{tx(s, 'hi')} Cikgu Liana</div>
+          <div style={{ ...TYPE.pageSub, marginTop: 4 }}>SK Nabawan · Year 4 Bahasa Inggeris</div>
+        </div>
+
+        {/* 2x2 StatCard grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <StatCard icon="smartphone"  label={tx(s, 'savedOnThisPhone')}    value={`24 ${tx(s, 'items')}`} />
+          <StatCard icon="cloudUpload" label={tx(s, 'readyToSync')}         value={`${queued} ${tx(s, 'items')}`} attention valueColor={T.peach} />
+          <StatCard icon="download"    label={tx(s, 'downloadedModules')}   value={`${downloaded} ${tx(s, 'modules')}`} />
+          <StatCard icon="checkCircle2" label={tx(s, 'completedThisWeek')}  value={`${completed} ${tx(s, 'modules')}`} />
+        </div>
+
+        {/* Continue learning */}
+        <div>
+          <div style={{ ...TYPE.sectionHead, marginBottom: 12 }}>{tx(s, 'continueLearning')}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {cont.map(m => (
+              <ModuleCard key={m.id} mod={m} s={s} progress={m.progress}
+                onClick={() => { set(p => ({ ...p, openModule: m.id })); go('module'); }}
+              />
             ))}
           </div>
         </div>
-      )}
-    </div>
+
+        {/* Quick actions */}
+        <div>
+          <div style={{ ...TYPE.sectionHead, marginBottom: 12 }}>{tx(s, 'quickActions')}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+            {[
+              { id: 'modules', icon: 'bookOpen',   label: tx(s, 'modulesNav') },
+              { id: 'add',     icon: 'camera',     label: tx(s, 'addEvidenceNav') },
+              { id: 'sync',    icon: 'refreshCw',  label: tx(s, 'syncQueueNav') },
+              { id: 'record',  icon: 'fileText',   label: tx(s, 'myRecordNav') },
+            ].map(it => (
+              <button key={it.id} onClick={() => go(it.id)} style={{
+                background: T.surface, border: `1px solid ${T.line}`, borderRadius: 12,
+                height: 64, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+                cursor: 'pointer', fontFamily: 'inherit',
+              }}>
+                <Icon name={it.icon} size={20} color={T.ink} />
+                <span style={{ ...TYPE.navLabel, color: T.ink2 }}>{it.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </ScreenBody>
+    </>
   );
 }
 
 // -----------------------------------------------------------------------------
+// 4.3 Modules list
+// -----------------------------------------------------------------------------
 function ModulesScreen({ s, set, go }) {
   const [filter, setFilter] = useState('all');
-  const filtered = s.modules.filter(m => filter === 'all' ? true : m.state === filter);
+  const [q, setQ] = useState('');
+  const filtered = s.modules.filter(m => {
+    if (filter !== 'all' && m.domain !== filter) return false;
+    if (q && !moduleTitle(m, s).toLowerCase().includes(q.toLowerCase())) return false;
+    return true;
+  });
+  const chips = [
+    { id: 'all', label: 'All' },
+    { id: 'D1',  label: 'SGM D1' },
+    { id: 'D2',  label: 'SGM D2' },
+    { id: 'D3',  label: 'SGM D3' },
+    { id: 'D4',  label: 'SGM D4' },
+  ];
   return (
-    <div style={{ padding: '20px 18px 28px' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 14 }}>
-        <div style={{ fontSize: 24, fontWeight: 700, color: T.text, letterSpacing: -0.5 }}>{tx(s, 'modules')}</div>
-        <InfoPopover content={tx(s, 'moduleInfo')} />
-      </div>
-      <FilterChips value={filter} setValue={setFilter} options={[
-        { id: 'all',        label: tx(s, 'all') },
-        { id: 'available',  label: tx(s, 'available') },
-        { id: 'downloaded', label: tx(s, 'onPhone') },
-        { id: 'completed',  label: tx(s, 'done') },
-      ]} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>
-        {filtered.map(m => (
-          <ModuleRow key={m.id} mod={m}
-            onOpen={() => { set(p => ({ ...p, openModule: m.id })); go('module'); }}
-            onDownload={() => downloadModule(m.id, set, s, go)}
-            s={s}
-          />
-        ))}
-      </div>
-    </div>
+    <>
+      <AppHeader back title="CPD Modules" onBack={() => go('home')}
+        right={<button aria-label="Filter" style={{
+          width: 32, height: 32, border: 'none', background: 'transparent', color: T.ink2,
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}><Icon name="filter" size={20} /></button>}
+      />
+      <ScreenBody>
+        <TextInput value={q} onChange={setQ} placeholder={tx(s, 'searchModule')} leftIcon="search" />
+
+        <CalloutCard tone="green" icon="cloudUpload"
+          title={tx(s, 'goodTimeToDownloadTitle')}
+          body={tx(s, 'goodTimeToDownloadBody')}
+        />
+
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+          {chips.map(c => {
+            const on = filter === c.id;
+            return (
+              <button key={c.id} onClick={() => setFilter(c.id)} style={{
+                flexShrink: 0,
+                background: on ? T.navy : T.surface,
+                color:      on ? '#fff'  : T.ink2,
+                border:     on ? 'none' : `1px solid ${T.line}`,
+                padding: '8px 14px', borderRadius: R.pill,
+                fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+              }}>{c.label}</button>
+            );
+          })}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {filtered.map(m => (
+            <ModuleCard key={m.id} mod={m} s={s}
+              downloaded={m.state === 'downloaded' || m.state === 'completed'}
+              onClick={() => { set(p => ({ ...p, openModule: m.id })); go('module'); }}
+              onDownload={() => downloadModule(m.id, set, s, go)}
+            />
+          ))}
+        </div>
+      </ScreenBody>
+    </>
   );
 }
 
-function FilterChips({ value, setValue, options }) {
-  return (
-    <div style={{ display: 'flex', gap: 6, overflowX: 'auto' }}>
-      {options.map(f => {
-        const active = value === f.id;
-        return (
-          <button key={f.id} onClick={() => setValue(f.id)} style={{
-            border: 'none',
-            background: active ? T.navy : T.surface2,
-            color: active ? '#fff' : T.text2,
-            padding: '8px 14px', borderRadius: 999,
-            fontSize: 12, fontWeight: 600, cursor: 'pointer',
-            fontFamily: 'inherit', whiteSpace: 'nowrap',
-          }}>{f.label}</button>
-        );
-      })}
-    </div>
-  );
-}
-
-function downloadModule(id, set, s, goEdge) {
-  // 1. Offline -> show the Download blocked edge case (Figure 4 panel 1).
-  if (!s.online) {
-    if (goEdge) goEdge('edge-blocked');
-    return;
-  }
-  // 2. Already downloaded a bunch -> simulate "storage low" before downloading
-  //    another (Figure 4 panel 4). The threshold of 2 keeps the demo realistic
-  //    with the seed data (2 modules already in the downloaded/completed state).
+// Download handler (kept from previous prototype, adapted to new spec).
+// Triggers edge screens on real failure paths.
+function downloadModule(id, set, s, go) {
+  if (!s.online) { if (go) go('edge-blocked'); return; }
   const downloadedCount = s.modules.filter(m => m.state === 'downloaded' || m.state === 'completed').length;
-  if (downloadedCount >= 2) {
-    if (goEdge) goEdge('edge-storage');
-    return;
-  }
-  set(p => ({ ...p, modules: p.modules.map(m => m.id === id ? { ...m, state: 'downloading', progress: 0 } : m) }));
-  let prog = 0;
-  const tick = setInterval(() => {
-    prog += 0.18 + Math.random() * 0.12;
-    if (prog >= 1) {
-      clearInterval(tick);
-      set(p => ({ ...p, modules: p.modules.map(m => m.id === id ? { ...m, state: 'downloaded', progress: 1 } : m), toast: tx(s, 'moduleDownloaded') }));
-      setTimeout(() => set(p => ({ ...p, toast: null })), 2400);
-    } else {
-      set(p => ({ ...p, modules: p.modules.map(m => m.id === id ? { ...m, progress: prog } : m) }));
-    }
-  }, 280);
+  if (downloadedCount >= 3) { if (go) go('edge-storage'); return; }
+  set(p => ({ ...p, modules: p.modules.map(m => m.id === id ? { ...m, state: 'downloaded', progress: 1 } : m) }));
 }
 
-function ModuleRow({ mod, onOpen, onDownload, s }) {
-  const stateChip = {
-    available:   <Chip>{tx(s, 'get')}</Chip>,
-    downloading: <Chip tone="teal" mono>{tx(s, 'downloading')}</Chip>,
-    downloaded:  <Chip tone="navy" mono>{tx(s, 'onPhone')}</Chip>,
-    completed:   <Chip tone="success" mono>{tx(s, 'done')}</Chip>,
-  }[mod.state];
+// -----------------------------------------------------------------------------
+// 4.4 Module detail
+// -----------------------------------------------------------------------------
+function ModuleDetailScreen({ s, set, go }) {
+  const mod = s.modules.find(m => m.id === s.openModule) || s.modules[0];
+  const [checks, setChecks] = useState({ read: true, tried: true, written: false });
+  const [notes, setNotes] = useState('');
   return (
-    <div style={{
-      background: T.card, border: `1px solid ${T.border}`,
-      borderRadius: 16, padding: 14, boxShadow: T.shadow1,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+    <>
+      <AppHeader back title="Module" onBack={() => go('modules')} />
+      <ScreenBody>
+        {/* Top card: module title + saved-on-phone pill + 60% progress */}
         <div style={{
-          width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-          background: `linear-gradient(135deg, ${T.navy}, ${T.teal})`,
-          color: '#fff', fontFamily: 'JetBrains Mono, monospace',
-          fontSize: 12, fontWeight: 700,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>{mod.domain}</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, lineHeight: 1.3 }}>{moduleTitle(mod, s)}</div>
-            {stateChip}
+          background: T.surface, border: `1px solid ${T.line}`, borderRadius: R.card, padding: 16,
+          display: 'flex', flexDirection: 'column', gap: 12,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: 12,
+              background: T.surface2, color: T.ink,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <Icon name="bookOpen" size={20} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ ...TYPE.cardTitle }}>{moduleTitle(mod, s)}</div>
+              <div style={{ marginTop: 6 }}>
+                <Badge tone="success">
+                  <Icon name="check" size={12} stroke={2.4} style={{ marginRight: 4 }} />
+                  {tx(s, 'savedOnPhonePill')}
+                </Badge>
+              </div>
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: T.ink2 }}>{Math.round(mod.progress * 100)}%</div>
           </div>
-          <div style={{ fontSize: 12, color: T.text2, marginTop: 6, lineHeight: 1.5 }}>{moduleSummary(mod, s)}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, fontSize: 11, color: T.text3 }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace' }}>{mod.sizeMB.toFixed(1)} MB</span>
-            <Dot color={T.text3} size={2} />
-            <span style={{ fontFamily: 'JetBrains Mono, monospace' }}>{mod.durationMin} min</span>
-            <Dot color={T.text3} size={2} />
-            <span>{mod.lang.join(' - ')}</span>
-            {s.language === 'KDZ' && mod.lang.includes('KDZ') && (
-              <>
-                <Dot color={T.teal} size={2} />
-                <span>{tx(s, 'kdzPack')}</span>
-              </>
-            )}
+          <ProgressBarRow value={mod.progress} />
+          <div style={{ fontSize: 12, fontWeight: 400, color: T.ink3 }}>3 of {mod.chapters} sections</div>
+        </div>
+
+        {/* Section heading */}
+        <div>
+          <div style={{ fontSize: 17, lineHeight: '24px', fontWeight: 700, color: T.ink }}>{tx(s, 'sectionTryInClass')}</div>
+          <div style={{ fontSize: 14, lineHeight: '22px', color: T.ink2, marginTop: 8 }}>{tx(s, 'sectionTryInClassBody')}</div>
+        </div>
+
+        {/* Checklist */}
+        <div>
+          <div style={{ ...TYPE.sectionHead, marginBottom: 12 }}>{tx(s, 'yourChecklist')}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              { id: 'read',    label: tx(s, 'readTheIdea') },
+              { id: 'tried',   label: tx(s, 'tryOneActivity') },
+              { id: 'written', label: tx(s, 'writeReflection') },
+            ].map(it => {
+              const on = !!checks[it.id];
+              return (
+                <button key={it.id} onClick={() => setChecks(c => ({ ...c, [it.id]: !c[it.id] }))} style={{
+                  background: 'transparent', border: 'none', padding: 0,
+                  display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', fontFamily: 'inherit',
+                }}>
+                  <span style={{
+                    width: 24, height: 24, borderRadius: 6,
+                    background: on ? T.navy : 'transparent',
+                    border: on ? 'none' : `1.5px solid ${T.line}`,
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    {on && <Icon name="check" size={14} color="#fff" stroke={2.4} />}
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: T.ink }}>{it.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
-      </div>
-      {mod.state === 'downloading' && (
-        <div style={{ marginTop: 12, height: 4, background: T.surface2, borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ height: '100%', background: T.teal, width: `${(mod.progress*100).toFixed(0)}%`, transition: 'width 0.25s' }} />
-        </div>
-      )}
-      <div style={{ marginTop: 12 }}>
-        {mod.state === 'available' && (
-          <button onClick={onDownload} style={{ ...btnPrimary, width: '100%', padding: '11px 14px', fontSize: 13 }}>
-            <Icon name="download" size={14} stroke={2.2} /> {tx(s, 'download')}
-          </button>
-        )}
-        {mod.state === 'downloaded' && (
-          <button onClick={onOpen} style={{ ...btnPrimary, width: '100%', padding: '11px 14px', fontSize: 13 }}>
-            {tx(s, 'openModule')} <Icon name="arrowR" size={14} />
-          </button>
-        )}
-        {mod.state === 'completed' && (
-          <button onClick={onOpen} style={{ ...btnSecondary, width: '100%', padding: '11px 14px', fontSize: 13 }}>
-            {tx(s, 'reviewNotes')}
-          </button>
-        )}
-        {mod.state === 'downloading' && (
-          <button disabled style={{ ...btnSecondary, width: '100%', padding: '11px 14px', fontSize: 13, opacity: 0.6, cursor: 'wait' }}>
-            {(mod.progress*100).toFixed(0)}%
-          </button>
-        )}
-      </div>
-    </div>
+
+        <Field label={tx(s, 'reflectionNotes')}>
+          <TextArea value={notes} onChange={setNotes} placeholder={tx(s, 'writeYourNotes')} max={300} />
+        </Field>
+
+        <OutlineButton icon="download" onClick={() => go('modules')}>
+          {tx(s, 'saveOffline')}
+        </OutlineButton>
+      </ScreenBody>
+    </>
   );
 }
 
 Object.assign(window, {
-  Header, BottomNav, StatusPill, InfoPopover, DomainTile, MiniModuleRow,
-  HomeScreen, ModulesScreen, ModuleRow, FilterChips,
-  btnPrimary, btnSecondary, btnGhost,
+  WelcomeScreen, HomeScreen, ModulesScreen, ModuleDetailScreen, downloadModule,
 });

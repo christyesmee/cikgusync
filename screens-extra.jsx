@@ -1,306 +1,114 @@
-// CikguSync - Extra screens covered by Figures 1, 2 and 4 of the mockups
-// that did not exist as navigable views in the original prototype:
-//   - WelcomeScreen        (Figure 1, panel 1)
-//   - SyncQueueScreen      (Figure 2, panel 3)
-//   - EdgeCaseScreen        (Figure 4, four states)
-//   - DataUseReceipt        (Figure 2, panel 4 - block at bottom of CPD record)
-//
-// All visuals use the existing T tokens + Plus Jakarta Sans + JetBrains Mono
-// so they sit naturally next to HomeScreen / ModulesScreen / etc.
+// CikguSync - Sync Queue (Figure 2 panel 3) + Edge case template (Figure 4).
 
 // -----------------------------------------------------------------------------
-// Welcome - first screen the teacher sees. Logo, tagline, language picker,
-// online-state hint, big Start button, "How it works" secondary link.
-// -----------------------------------------------------------------------------
-function WelcomeScreen({ s, set, go }) {
-  const setLanguage = (language) => {
-    set(p => ({ ...p, language }));
-    try { localStorage.setItem('cs-language', language); } catch (e) {}
-  };
-  const lang = s.language || 'BM';
-  return (
-    <div style={{
-      minHeight: '100%', display: 'flex', flexDirection: 'column',
-      padding: '32px 22px 24px', background: T.surface,
-    }}>
-      {/* Brand block */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, paddingTop: 12 }}>
-        <Logo size={88} />
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 30, fontWeight: 800, color: T.text, letterSpacing: -0.7, lineHeight: 1 }}>
-            CikguSync
-          </div>
-          <div style={{ fontSize: 12.5, color: T.text2, marginTop: 8 }}>
-            {tx(s, 'welcomeTagline')}
-          </div>
-        </div>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          padding: '8px 14px', borderRadius: 999,
-          background: T.tealSoft, color: T.tealDark,
-          fontSize: 12, fontWeight: 600,
-          marginTop: 4,
-        }}>
-          <Icon name="spark" size={14} stroke={2} />
-          {tx(s, 'welcomeSub')}
-        </div>
-      </div>
-
-      {/* Language picker - inline, two languages with "+more" hint via help icon */}
-      <div style={{ marginTop: 18 }}>
-        <div style={{ fontSize: 10.5, fontWeight: 700, color: T.text3, letterSpacing: 0.7, textTransform: 'uppercase', marginBottom: 8 }}>
-          {tx(s, 'chooseLanguage')}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-          {[
-            { id: 'BM', label: 'Bahasa Malaysia' },
-            { id: 'EN', label: 'English' },
-          ].map(l => {
-            const active = lang === l.id;
-            return (
-              <button key={l.id} onClick={() => setLanguage(l.id)} style={{
-                border: `1.5px solid ${active ? T.navy : T.border}`,
-                background: active ? 'var(--cs-navy-soft)' : T.card,
-                color: active ? T.navy : T.text,
-                padding: '12px 10px', borderRadius: 12,
-                fontSize: 13, fontWeight: active ? 700 : 600,
-                cursor: 'pointer', fontFamily: 'inherit',
-              }}>{l.label}</button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Online status hint card */}
-      <div style={{
-        marginTop: 12, padding: '10px 12px', borderRadius: 12,
-        background: T.card, border: `1px solid ${T.border}`,
-        display: 'flex', alignItems: 'center', gap: 10, boxShadow: T.shadow1,
-      }}>
-        <Icon name={s.online ? 'cloud' : 'off'} size={18} color={s.online ? T.success : T.queue} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 12.5, fontWeight: 700, color: T.text }}>
-            {s.online ? tx(s, 'youreOnline') : tx(s, 'youreOffline')}
-          </div>
-          <div style={{ fontSize: 11, color: T.text2, marginTop: 1 }}>
-            {s.online ? tx(s, 'goodTimeToDownload') : tx(s, 'waitingForConnection')}
-          </div>
-        </div>
-      </div>
-
-      {/* Start CTA */}
-      <button onClick={() => go('home')} style={{
-        ...btnPrimary, marginTop: 14, padding: '15px', fontSize: 15,
-        background: T.navyDeep,
-      }}>
-        {tx(s, 'start')}
-      </button>
-      <button onClick={() => set(p => ({ ...p, toast: tx(s, 'welcomeSub') })) || setTimeout(() => set(p => ({ ...p, toast: null })), 2400)}
-        style={{
-          background: 'transparent', border: 'none', color: T.navy,
-          padding: '10px', fontSize: 12.5, fontWeight: 600,
-          cursor: 'pointer', fontFamily: 'inherit',
-          textDecoration: 'underline', textDecorationStyle: 'dotted',
-          textUnderlineOffset: 4, marginTop: 4,
-        }}>
-        {tx(s, 'howItWorks')}
-      </button>
-    </div>
-  );
-}
-
-// -----------------------------------------------------------------------------
-// Sync Queue - dedicated screen, lists every unsynced (queued / retrying) and
-// the most recent synced items. Mirrors the mockup "Sync Queue" exactly:
-// header pill with counter, big "Sync now" button, per-item rows with status chip.
+// 5.3 Sync Queue
 // -----------------------------------------------------------------------------
 function SyncQueueScreen({ s, set, go }) {
   const queued = s.evidence.filter(e => !e.synced);
-  const recent = s.evidence.filter(e => e.synced).slice(0, 4);
-  const all = [
-    ...queued.map(e => ({ ...e, _status: e.retry && e.retry >= 2 ? 'retry' : 'queued' })),
-    ...recent.map(e => ({ ...e, _status: 'synced' })),
+  // Build list: unsynced first, then a couple of synced rows for context.
+  const list = [
+    ...s.evidence,
   ];
 
   const syncAll = () => {
-    // Offline + queued items -> show Upload failed edge case screen
-    // (Figure 4 panel 2). Evidence stays safe on the phone, will retry.
-    if (!s.online && queued.length > 0) {
-      go('edge-upload');
-      return;
-    }
+    if (!s.online && queued.length > 0) { go('edge-upload'); return; }
     if (queued.length === 0) return;
-    // animate queued items to synced
     queued.forEach((e, i) => setTimeout(() => {
       set(p => ({
         ...p,
         evidence: p.evidence.map(x => x.id === e.id ? { ...x, synced: true, syncedAt: '14 May 09:31' } : x),
       }));
-    }, 350 + i * 300));
-    set(p => ({ ...p, toast: tx(s, 'syncing') }));
-    setTimeout(() => set(p => ({ ...p, toast: null })), 2200);
+    }, 300 + i * 250));
   };
 
   const retryOne = (id) => {
-    if (!s.online) {
-      // Trying to retry one item while still offline -> Upload failed screen.
-      go('edge-upload');
-      return;
-    }
+    if (!s.online) { go('edge-upload'); return; }
     set(p => ({
       ...p,
-      evidence: p.evidence.map(x => x.id === id
-        ? { ...x, synced: true, syncedAt: '14 May 09:31', retry: 0 }
-        : x),
-      toast: tx(s, 'syncing'),
+      evidence: p.evidence.map(x => x.id === id ? { ...x, synced: true, syncedAt: '14 May 09:31', retry: 0 } : x),
     }));
-    setTimeout(() => set(p => ({ ...p, toast: null })), 2200);
   };
 
+  const count = queued.length;
   return (
-    <div>
-      <Header title={tx(s, 'syncQueueTitle')} back={() => go('home')} />
-      <div style={{ padding: '16px 16px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-        {/* Counter card */}
+    <>
+      <AppHeader back title={tx(s, 'syncQueueTitle')} onBack={() => go('home')} />
+      <ScreenBody>
+        {/* Compact white hero with Sync now button */}
+        <CompactHero
+          icon="refreshCw"
+          title={count === 0
+            ? tx(s, 'allSchoolsSynced')
+            : `${count} ${count === 1 ? tx(s, 'itemWaitingToSync') : tx(s, 'itemsWaitingToSync')}`}
+          sub={count === 0 ? '' : tx(s, 'tapSyncNow')}
+          button={<PrimaryButton onClick={syncAll} disabled={count === 0} icon="refreshCw">
+            {tx(s, 'syncNow')}
+          </PrimaryButton>}
+        />
+
+        <div style={{ ...TYPE.eyebrow }}>{tx(s, 'queueLabel')}</div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {list.map(ev => <QueueItem key={ev.id} ev={ev} s={s} onRetry={() => retryOne(ev.id)} />)}
+        </div>
+
+        {/* Who can see this? disclosure */}
         <div style={{
-          background: T.card, border: `1px solid ${T.border}`,
-          borderRadius: 16, padding: 16, boxShadow: T.shadow1,
-          display: 'flex', alignItems: 'center', gap: 12,
+          background: T.surface, border: `1px solid ${T.line}`, borderRadius: 12, padding: 14,
         }}>
-          <div style={{
-            width: 40, height: 40, borderRadius: '50%',
-            background: queued.length > 0 ? T.queueS : T.successS,
-            color: queued.length > 0 ? T.queue : T.success,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <Icon name="sync" size={20} stroke={2} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <Icon name="info" size={16} color={T.ink2} />
+            <div style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>{tx(s, 'whoCanSeeThis')}</div>
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>
-              {queued.length > 0
-                ? `${queued.length} ${queued.length === 1 ? tx(s, 'itemWaitingToSync') : tx(s, 'itemsWaitingToSync')}`
-                : tx(s, 'nothingWaiting')}
-            </div>
-            {queued.length > 0 && (
-              <div style={{ fontSize: 11.5, color: T.text2, marginTop: 2 }}>
-                {tx(s, 'tapSyncNow')}
-              </div>
-            )}
-          </div>
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {[
+              tx(s, 'youFullEvidence'),
+              tx(s, 'guruBesarCounts'),
+              tx(s, 'ppdAggregated'),
+            ].map((t, i) => (
+              <li key={i} style={{ fontSize: 12, lineHeight: '18px', color: T.ink3 }}>· {t}</li>
+            ))}
+          </ul>
         </div>
-
-        {/* Sync now CTA */}
-        <button onClick={syncAll} disabled={queued.length === 0} style={{
-          ...btnPrimary, padding: '14px', fontSize: 14,
-          background: queued.length === 0 ? T.surface2 : T.navyDeep,
-          color: queued.length === 0 ? T.text3 : '#fff',
-          cursor: queued.length === 0 ? 'not-allowed' : 'pointer',
-        }}>
-          <Icon name="sync" size={16} stroke={2.2} /> {tx(s, 'syncNow')}
-        </button>
-
-        {/* Queue list */}
-        <div style={{ marginTop: 4 }}>
-          <div style={{ fontSize: 10.5, fontWeight: 700, color: T.text3, letterSpacing: 0.7, textTransform: 'uppercase', padding: '0 2px 8px' }}>
-            {tx(s, 'queueLabel')}
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {all.length === 0 && (
-              <div style={{
-                padding: 16, borderRadius: 12, background: T.surface,
-                fontSize: 12.5, color: T.text2, textAlign: 'center',
-              }}>{tx(s, 'queueEmpty')}</div>
-            )}
-            {all.map(e => <QueueRow key={e.id} ev={e} s={s} onRetry={() => retryOne(e.id)} />)}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function QueueRow({ ev, s, onRetry }) {
-  const mod = MODULES.find(m => m.id === ev.moduleId);
-  const chip = ev._status === 'synced'
-    ? <Chip tone="success" mono>{tx(s, 'synced')}</Chip>
-    : ev._status === 'retry'
-      ? <Chip tone="warn" mono>{tx(s, 'retryCount')} {ev.retry || 2}</Chip>
-      : <Chip tone="queue" mono>{tx(s, 'queued')}</Chip>;
-  return (
-    <div style={{
-      background: T.card, border: `1px solid ${T.border}`, borderRadius: 12,
-      padding: 12, display: 'flex', alignItems: 'flex-start', gap: 12,
-      boxShadow: T.shadow1,
-    }}>
-      <div style={{
-        width: 32, height: 32, borderRadius: 9, flexShrink: 0,
-        background: T.surface2, color: T.text2,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <Icon name={ev.note ? 'record' : 'camera'} size={16} />
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: T.text, lineHeight: 1.3,
-            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {mod ? moduleTitle(mod, s) : (ev.note || 'Evidence')}
-          </div>
-        </div>
-        <div style={{ fontSize: 10.5, color: T.text3, marginTop: 4, fontFamily: 'JetBrains Mono, monospace' }}>
-          {ev.id} · {ev.date} · SGM {ev.domain}
-        </div>
-        {ev._status === 'retry' && (
-          <button onClick={onRetry} style={{
-            background: 'transparent', border: 'none', color: T.warn,
-            padding: '4px 0 0', fontSize: 11.5, fontWeight: 700,
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}>{tx(s, 'queueTapToRetry')}</button>
-        )}
-      </div>
-      <div style={{ flexShrink: 0 }}>{chip}</div>
-    </div>
+      </ScreenBody>
+    </>
   );
 }
 
 // -----------------------------------------------------------------------------
-// Edge-case screens (Figure 4): full-screen states with centered icon, title,
-// body, primary action, secondary link. A single EdgeCaseScreen reads a `kind`
-// prop and renders the matching content from COPY.
+// 7. Edge case template (Figure 4)
 // -----------------------------------------------------------------------------
 const EDGE_DEFS = {
   blocked: {
-    icon: 'off', tone: T.queue, soft: T.queueS,
-    titleK: 'edgeBlockedTitle', bodyK: 'edgeBlockedBody',
+    iconTone: 'peach', icon: 'cloudOff',
+    titleK: 'edgeBlockedTitle',     bodyK: 'edgeBlockedBody',
     primaryK: 'edgeBlockedPrimary', secondaryK: 'edgeBlockedSecondary',
     primaryGo: 'home', secondaryGo: 'modules',
   },
   uploadFailed: {
-    icon: 'warn', tone: T.danger, soft: T.dangerS,
-    titleK: 'edgeUploadTitle', bodyK: 'edgeUploadBody',
+    iconTone: 'red', icon: 'alertTriangle',
+    titleK: 'edgeUploadTitle',     bodyK: 'edgeUploadBody',
     primaryK: 'edgeUploadPrimary', secondaryK: 'edgeUploadSecondary',
     primaryGo: 'sync', secondaryGo: 'sync',
-    extra: () => ({ retryCountText: 'Item: Evidence — Active learning · Retry count: 2 of 5' }),
+    detailK: 'edgeUploadDetail', detailMono: true,
   },
   incomplete: {
-    icon: 'warn', tone: T.warn, soft: T.warnS,
+    iconTone: 'peach', icon: 'alertTriangle',
     titleK: 'edgeIncompleteTitle', bodyK: 'edgeIncompleteBody',
     primaryK: 'edgeIncompletePrimary', secondaryK: 'edgeIncompleteSecondary',
-    primaryGo: 'capture', secondaryGo: 'home',
+    primaryGo: 'add', secondaryGo: 'home',
     issues: ['edgeIncompleteItem1', 'edgeIncompleteItem2', 'edgeIncompleteItem3'],
   },
   storage: {
-    icon: 'queue', tone: T.warn, soft: T.warnS,
-    titleK: 'edgeStorageTitle', bodyK: 'edgeStorageBody',
+    iconTone: 'peach', icon: 'smartphone',
+    titleK: 'edgeStorageTitle',     bodyK: 'edgeStorageBody',
     primaryK: 'edgeStoragePrimary', secondaryK: 'edgeStorageSecondary',
     primaryGo: 'sync', secondaryGo: 'modules',
   },
 };
 
 function EdgeCaseScreen({ kind, s, set, go }) {
-  const def = EDGE_DEFS[kind] || EDGE_DEFS.blocked;
-  // For incomplete-evidence, if CaptureScreen.submit attached real issues,
-  // show those concrete strings; otherwise show the generic three.
+  const d = EDGE_DEFS[kind] || EDGE_DEFS.blocked;
   const dynamicIssues = kind === 'incomplete' && s.edgeIssues && s.edgeIssues.length > 0
     ? s.edgeIssues
     : null;
@@ -309,110 +117,53 @@ function EdgeCaseScreen({ kind, s, set, go }) {
     go(target);
   };
   return (
-    <div style={{
-      minHeight: '100%', display: 'flex', flexDirection: 'column',
-      padding: '20px 20px 24px', background: T.surface,
-    }}>
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 18, textAlign: 'center', maxWidth: 320, margin: '0 auto' }}>
-        <div style={{
-          width: 74, height: 74, borderRadius: '50%',
-          background: def.soft, color: def.tone,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Icon name={def.icon} size={32} stroke={2} />
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '20px 20px 24px' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, textAlign: 'center', maxWidth: 320, margin: '48px auto 0' }}>
+        <IconCircle icon={d.icon} tone={d.iconTone} />
+        <div style={{ fontSize: 20, lineHeight: '28px', fontWeight: 700, color: T.ink, marginTop: 8 }}>
+          {tx(s, d.titleK)}
         </div>
-        <div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: T.text, lineHeight: 1.3 }}>
-            {tx(s, def.titleK)}
-          </div>
-          <div style={{ fontSize: 13, color: T.text2, marginTop: 10, lineHeight: 1.55 }}>
-            {tx(s, def.bodyK)}
-          </div>
+        <div style={{ fontSize: 14, lineHeight: '20px', fontWeight: 400, color: T.ink3 }}>
+          {tx(s, d.bodyK)}
         </div>
 
-        {(def.issues || dynamicIssues) && (
+        {/* Detail panel - mono (Upload failed) */}
+        {d.detailK && (
           <div style={{
-            width: '100%', background: T.card, border: `1px solid ${T.border}`,
+            marginTop: 8, width: '100%',
+            background: T.surface2, borderRadius: 8, padding: '10px 12px',
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 500,
+            color: T.ink2,
+          }}>{tx(s, d.detailK)}</div>
+        )}
+
+        {/* Detail panel - bulleted issues (Incomplete) */}
+        {(d.issues || dynamicIssues) && (
+          <div style={{
+            marginTop: 8, width: '100%',
+            background: T.peachPale, border: `1px solid #F4D6B8`,
             borderRadius: 12, padding: '12px 14px', textAlign: 'left',
-            boxShadow: T.shadow1,
           }}>
             <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {(dynamicIssues || def.issues.map(k => tx(s, k))).map((text, i) => (
-                <li key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12, color: T.text, lineHeight: 1.5 }}>
-                  <Dot color={def.tone} size={6} style={{ marginTop: 7, flexShrink: 0 }} />
+              {(dynamicIssues || d.issues.map(k => tx(s, k))).map((text, i) => (
+                <li key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 13, lineHeight: '20px', color: T.ink }}>
+                  <span style={{ width: 4, height: 4, borderRadius: '50%', background: T.peach, marginTop: 8, flexShrink: 0 }} />
                   <span>{text}</span>
                 </li>
               ))}
             </ul>
           </div>
         )}
-
-        {def.extra && (
-          <div style={{
-            width: '100%', background: T.surface2, borderRadius: 8,
-            padding: '8px 10px', fontFamily: 'JetBrains Mono, monospace',
-            fontSize: 10.5, color: T.text2, textAlign: 'center',
-          }}>{def.extra().retryCountText}</div>
-        )}
       </div>
 
-      {/* Actions */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 12 }}>
-        <button onClick={() => goAndClear(def.primaryGo)} style={{
-          ...btnPrimary, padding: '14px', fontSize: 14,
-          background: T.navyDeep,
-        }}>{tx(s, def.primaryK)}</button>
-        <button onClick={() => goAndClear(def.secondaryGo)} style={{
-          background: 'transparent', border: 'none', color: T.navy,
-          padding: '10px', fontSize: 12.5, fontWeight: 600,
-          cursor: 'pointer', fontFamily: 'inherit',
-        }}>{tx(s, def.secondaryK)}</button>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 16 }}>
+        <PrimaryButton onClick={() => goAndClear(d.primaryGo)}>{tx(s, d.primaryK)}</PrimaryButton>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <TextLink onClick={() => goAndClear(d.secondaryGo)}>{tx(s, d.secondaryK)}</TextLink>
+        </div>
       </div>
     </div>
   );
 }
 
-// -----------------------------------------------------------------------------
-// Data-use receipt - block surfaced on the CPD record screen. Mirrors Fig. 2
-// panel 4: explicit list of what was uploaded, when, which domain, who can see.
-// -----------------------------------------------------------------------------
-function DataUseReceipt({ s }) {
-  const lastSync = s.evidence.find(e => e.syncedAt)?.syncedAt || '14 May 09:31';
-  return (
-    <div style={{
-      background: T.card, border: `1px solid ${T.border}`, borderRadius: 14,
-      padding: 14, boxShadow: T.shadow1,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        <Icon name="info" size={16} color={T.navy} />
-        <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>{tx(s, 'dataUseReceipt')}</div>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <ReceiptRow label={tx(s, 'whatWasUploaded')} value={tx(s, 'whatWasUploadedBody')} />
-        <ReceiptRow label={tx(s, 'when')} value={`${tx(s, 'whenBody')} · ${lastSync}`} mono />
-        <ReceiptRow label={tx(s, 'whichDomain')} value="SGM 2.0 D2 · Instructional Practice" />
-        <ReceiptRow label={tx(s, 'whoCanAccess')} value={tx(s, 'whoCanAccessBody')} />
-      </div>
-    </div>
-  );
-}
-
-function ReceiptRow({ label, value, mono }) {
-  return (
-    <div>
-      <div style={{ fontSize: 10.5, fontWeight: 700, color: T.text3, letterSpacing: 0.5, textTransform: 'uppercase' }}>
-        {label}
-      </div>
-      <div style={{
-        fontSize: 12, color: T.text2, marginTop: 3, lineHeight: 1.5,
-        fontFamily: mono ? 'JetBrains Mono, monospace' : 'inherit',
-      }}>{value}</div>
-    </div>
-  );
-}
-
-Object.assign(window, {
-  WelcomeScreen, SyncQueueScreen, QueueRow,
-  EdgeCaseScreen, EDGE_DEFS,
-  DataUseReceipt,
-});
+Object.assign(window, { SyncQueueScreen, EdgeCaseScreen, EDGE_DEFS });
