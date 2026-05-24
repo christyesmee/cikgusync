@@ -385,26 +385,24 @@ const RURAL_SCHOOLS = [
   { id: 'SK-KEN-31', name: 'SK Apin-Apin',      district: 'Keningau', rural: 'R1', teachers: 12, connected: true,  evidence30d: 28, last: '4h',  status: 'active' },
 ];
 
-// Logo - circular book-with-arrows brand mark. Per spec §1.5, reproduced
-// inline as SVG; 88 px on the Welcome screen, smaller elsewhere.
+// Logo - original CikguSync brand mark (book inside two teal sync arrows).
+// Rendered from assets/logo.png so the artwork stays identical to the asset
+// shipped with the project. The `brand` prop is kept for API compatibility
+// (older callers passed it for emphasis) but the image carries its own
+// colour, so we just render the asset at the requested size.
 function Logo({ size = 40, brand = false }) {
+  const src = (window.__resources && window.__resources.logo) || 'assets/logo.png';
   return (
-    <div style={{
-      width: size, height: size,
-      background: brand ? T.navy : '#fff',
-      border: brand ? 'none' : `1px solid ${T.line}`,
-      borderRadius: '50%',
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      flexShrink: 0,
-    }}>
-      <svg width={size * 0.62} height={size * 0.62} viewBox="0 0 24 24" fill="none"
-        stroke={brand ? '#fff' : T.navy} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 5h7a3 3 0 0 1 3 3v11" />
-        <path d="M21 5h-7a3 3 0 0 0-3 3v11" />
-        <path d="M5 18a16 16 0 0 1 4 1.5" />
-        <path d="M19 18a16 16 0 0 0-4 1.5" />
-      </svg>
-    </div>
+    <img
+      src={src}
+      alt="CikguSync"
+      draggable="false"
+      style={{
+        width: size, height: size,
+        objectFit: 'contain', display: 'block', flexShrink: 0,
+        userSelect: 'none',
+      }}
+    />
   );
 }
 
