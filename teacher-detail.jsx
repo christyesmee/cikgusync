@@ -457,6 +457,10 @@ function RecordScreen({ s, set, go }) {
           </div>
         ))}
 
+        {/* Data-use receipt - Figure 2 panel 4. Tells the teacher explicitly
+            what was uploaded, when, to which domain, and who can see what. */}
+        <DataUseReceipt s={s} />
+
         {/* Audit info collapsible (subtle, no card) */}
         <Collapsible title={tx(s, 'auditPortability')} subtle>
           <div style={{ fontSize: 12, color: T.text2, lineHeight: 1.6 }}>

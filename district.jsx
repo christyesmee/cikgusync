@@ -17,12 +17,14 @@ function DistrictApp({ s }) {
   };
 
   const domainTotals = [
-    { id: 'D1', name: 'Pengetahuan',  v: 38 },
-    { id: 'D2', name: 'Pengajaran',   v: 67 },
-    { id: 'D3', name: 'Komuniti',     v: 22 },
-    { id: 'D4', name: 'Peribadi',     v: 14 },
+    { id: 'D1', name: 'Professional Knowledge', v: 38, pct: 68 },
+    { id: 'D2', name: 'Instructional Practice', v: 67, pct: 74 },
+    { id: 'D3', name: 'Community Engagement',   v: 22, pct: 41 },
+    { id: 'D4', name: 'Personal Quality',       v: 14, pct: 56 },
   ];
   const maxD = Math.max(...domainTotals.map(d => d.v));
+  // District-wide totals (mockup numbers in Figure 3 right panel)
+  const districtTotals = { active: 412, synced: 1047, offline: 17, queued: 94 };
 
   return (
     <div style={{
@@ -82,12 +84,12 @@ function DistrictApp({ s }) {
           </div>
         </div>
 
-        {/* KPI row */}
+        {/* KPI row - mirrors Figure 3 right-panel KPIs */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
-          <Kpi label="Schools tracked"  v={totals.schools} sub={`${totals.offlineSchools} offline - counted`} />
-          <Kpi label="Teachers active" v={totals.teachers} sub="30-day window" />
-          <Kpi label="Evidence items"  v={totals.evidence} sub="+14% vs prev 30d" accent={T.success} />
-          <Kpi label="Audit coverage"  v="100%" sub="replacing SPLKPM" accent={T.navy} />
+          <Kpi label="Active teachers"  v={districtTotals.active}  sub="+38 this month" accent={T.navy} />
+          <Kpi label="Evidence synced"  v={districtTotals.synced.toLocaleString()} sub="+22% MoM" accent={T.success} />
+          <Kpi label="Offline schools"  v={districtTotals.offline} sub="~26% of district" accent={T.queue} />
+          <Kpi label="Queued (district)" v={districtTotals.queued} sub="awaiting sync" accent={T.warn} />
         </div>
 
         {/* Two column: domain chart + school list */}
@@ -113,16 +115,30 @@ function DistrictApp({ s }) {
                       <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: T.navy }}>{d.id}</span>
                       <span style={{ color: T.text, marginLeft: 8 }}>{d.name}</span>
                     </span>
-                    <span style={{ fontFamily: 'JetBrains Mono, monospace', color: T.text2 }}>{d.v}</span>
+                    <span style={{ fontFamily: 'JetBrains Mono, monospace', color: T.text2 }}>{d.v} · {d.pct}%</span>
                   </div>
                   <div style={{ height: 8, background: T.surface2, borderRadius: 4, overflow: 'hidden' }}>
                     <div style={{
-                      height: '100%', width: `${(d.v / maxD) * 100}%`,
-                      background: `linear-gradient(90deg, ${T.navy}, ${T.teal})`,
+                      height: '100%', width: `${d.pct}%`,
+                      background: d.pct < 50
+                        ? `linear-gradient(90deg, ${T.warn}, ${T.queue})`
+                        : `linear-gradient(90deg, ${T.navy}, ${T.teal})`,
                     }} />
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Alert callout - matches mockup D3 below 50% notice */}
+            <div style={{
+              marginTop: 14, padding: '10px 12px', borderRadius: 10,
+              background: T.warnS, color: T.warn,
+              display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 11.5, lineHeight: 1.5,
+            }}>
+              <Icon name="warn" size={14} style={{ flexShrink: 0, marginTop: 1 }} />
+              <span>
+                <b>D3 below 50% target.</b> Suggest pairing with #CikguJuara mentors next term.
+              </span>
             </div>
 
             {/* Partner sources */}

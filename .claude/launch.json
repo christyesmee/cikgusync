@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cikgusync",
+      "runtimeExecutable": "/opt/homebrew/bin/npx",
+      "runtimeArgs": ["http-server", "-p", "8766", "-c-1", "/Users/esmee/Downloads/CikguSync"],
+      "port": 8766
+    }
+  ]
+}

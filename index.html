@@ -92,9 +92,27 @@
 <body data-theme="light">
   <div id="root"></div>
   <div id="__loading">loading…</div>
+  <div id="__err" style="display:none;position:fixed;top:0;left:0;right:0;background:#fee;border-bottom:1px solid #c44;color:#900;font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 14px;z-index:99999;white-space:pre-wrap;max-height:60vh;overflow:auto"></div>
 
   <script>
     window.__resources = { logo: 'assets/logo.png' };
+    // Surface any uncaught error or Babel transform failure so the page is debuggable.
+    (function() {
+      var box = document.getElementById('__err');
+      function show(msg) {
+        if (!box) box = document.getElementById('__err');
+        if (!box) return;
+        box.style.display = 'block';
+        box.textContent = (box.textContent ? box.textContent + '\n\n' : '') + msg;
+      }
+      window.addEventListener('error', function(e) {
+        var src = e.filename ? ' (' + e.filename.split('/').pop() + ':' + e.lineno + ':' + e.colno + ')' : '';
+        show('[error] ' + (e.message || e.type) + src);
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        show('[promise] ' + (e.reason && (e.reason.message || e.reason)));
+      });
+    })();
   </script>
 
   <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
@@ -102,24 +120,69 @@
   <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
 
   <script>
+    // Expose React + hooks on window so the .jsx files can use them without
+    // imports. We avoid top-level `const useState = …` because teacher.jsx
+    // already declares its own `const { useState } = React;` and two scripts
+    // declaring the same lexical binding at top level throws
+    // "Can't create duplicate variable" in the shared script-realm.
     window.React = React;
     window.ReactDOM = ReactDOM;
-    const { useState, useEffect, useRef, useMemo, useCallback } = React;
-    window.useState = useState;
-    window.useEffect = useEffect;
-    window.useRef = useRef;
-    window.useMemo = useMemo;
-    window.useCallback = useCallback;
+    window.useState   = React.useState;
+    window.useEffect  = React.useEffect;
+    window.useRef     = React.useRef;
+    window.useMemo    = React.useMemo;
+    window.useCallback= React.useCallback;
   </script>
 
-  <script type="text/babel" data-presets="env,react" src="theme.jsx"></script>
-  <script type="text/babel" data-presets="env,react" src="android-frame.jsx"></script>
-  <script type="text/babel" data-presets="env,react" src="teacher.jsx"></script>
-  <script type="text/babel" data-presets="env,react" src="teacher-detail.jsx"></script>
-  <script type="text/babel" data-presets="env,react" src="screens-extra.jsx"></script>
-  <script type="text/babel" data-presets="env,react" src="leader.jsx"></script>
-  <script type="text/babel" data-presets="env,react" src="district.jsx"></script>
-  <script type="text/babel" data-presets="env,react" src="app.jsx"></script>
+  <!-- Manual loader: fetch each .jsx, transform with Babel, eval inline.
+       This surfaces real error messages instead of the "Script error." mask
+       you get with <script type="text/babel" src="…"> when the dev server is
+       cross-origin from the eval'd code. -->
+  <script>
+    (async function loadJsx() {
+      var box = document.getElementById('__err');
+      function show(msg) {
+        if (!box) box = document.getElementById('__err');
+        if (!box) return;
+        box.style.display = 'block';
+        box.textContent = (box.textContent ? box.textContent + '\n\n' : '') + msg;
+      }
+      var files = [
+        'theme.jsx',
+        'android-frame.jsx',
+        'teacher.jsx',
+        'screens-extra.jsx',
+        'teacher-detail.jsx',
+        'leader.jsx',
+        'district.jsx',
+        'app.jsx',
+      ];
+      for (var i = 0; i < files.length; i++) {
+        var f = files[i];
+        try {
+          var src = await (await fetch(f + '?ts=' + Date.now())).text();
+          var out = Babel.transform(src, {
+            presets: ['env', 'react'],
+            filename: f,
+            sourceMaps: 'inline',
+            sourceFileName: f,
+          }).code;
+          // Eval as a script with the original filename so DevTools shows it.
+          var blob = new Blob([out + '\n//# sourceURL=' + f], { type: 'application/javascript' });
+          await new Promise(function (resolve, reject) {
+            var s = document.createElement('script');
+            s.onload = resolve;
+            s.onerror = function (e) { reject(new Error('Eval failed for ' + f)); };
+            s.src = URL.createObjectURL(blob);
+            document.body.appendChild(s);
+          });
+        } catch (e) {
+          show('[' + f + '] ' + (e && (e.message || e)));
+          throw e;
+        }
+      }
+    })();
+  </script>
 
   <script>
     const tryHide = () => {

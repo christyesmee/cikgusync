@@ -250,6 +250,28 @@ function HomeScreen({ s, set, go }) {
         <Icon name="chevR" size={18} color={T.text3} />
       </button>
 
+      {/* Sync queue card - only when there are queued items */}
+      {queued > 0 && (
+        <button onClick={() => go('sync')} style={{
+          background: T.card, border: `1px solid ${T.border}`, borderRadius: 16,
+          padding: 14, textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit',
+          display: 'flex', alignItems: 'center', gap: 14, boxShadow: T.shadow1, width: '100%',
+        }}>
+          <div style={{
+            width: 46, height: 46, borderRadius: 13,
+            background: T.queueS, color: T.queue, flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}><Icon name="sync" size={20} stroke={2} /></div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{tx(s, 'syncQueueTitle')}</div>
+            <div style={{ fontSize: 12, color: T.text2, marginTop: 2 }}>
+              {queued} {queued === 1 ? tx(s, 'itemWaitingToSync') : tx(s, 'itemsWaitingToSync')}
+            </div>
+          </div>
+          <Icon name="chevR" size={18} color={T.text3} />
+        </button>
+      )}
+
       {/* CPD record summary */}
       <div style={{
         background: T.card, border: `1px solid ${T.border}`,

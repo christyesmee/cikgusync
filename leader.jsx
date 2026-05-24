@@ -147,42 +147,145 @@ function DigestBar({ label, v, cap }) {
   );
 }
 
-// School-summary "tap-through" view (still mobile)
+// School-summary "tap-through" view (still mobile) - Figure 3 left panel.
+// Layout follows the mockup: navy Weekly Digest hero card, per-domain
+// activity list, 2x2 KPI grid, "Who may need support" card with teacher list,
+// suggested actions card.
 function LeaderDigest({ s, back }) {
   const teachers = [
-    { name: 'Liana Anak Gunsalam', items: 8, last: '4h',  status: 'active',  d: 'D1-D2' },
-    { name: 'Faridah binti Yusof', items: 5, last: '1d',  status: 'active',  d: 'D2-D3' },
-    { name: 'Azlan bin Karim',     items: 3, last: '3d',  status: 'active',  d: 'D1' },
-    { name: 'Rosli bin Othman',    items: 0, last: '14d', status: 'inactive',d: 'none' },
-    { name: 'Nurul binti Hashim',  items: 2, last: '6d',  status: 'low',     d: 'D4' },
-    { name: 'Marcus Anak Jugah',   items: 0, last: '21d', status: 'transferred', d: 'none' },
+    { name: 'Liana Anak Gunsalam', items: 8, last: '4h',  status: 'active',     d: 'D1-D2' },
+    { name: 'Faridah binti Yusof', items: 5, last: '1d',  status: 'active',     d: 'D2-D3' },
+    { name: 'Azlan bin Karim',     items: 3, last: '3d',  status: 'active',     d: 'D1' },
+    { name: 'Rosli bin Othman',    items: 0, last: '14d', status: 'inactive',   d: 'none' },
+    { name: 'Nurul binti Hashim',  items: 2, last: '6d',  status: 'low',        d: 'D4' },
+    { name: 'Marcus Anak Jugah',   items: 0, last: '21d', status: 'transferred',d: 'none' },
+  ];
+  const needSupport = teachers.filter(t => t.status === 'inactive' || t.status === 'low');
+  const sgmActivity = [
+    { id: 'D1', name: 'Professional Knowledge', items: 4 },
+    { id: 'D2', name: 'Instructional Practice', items: 5 },
+    { id: 'D3', name: 'Community Engagement',   items: 2 },
+    { id: 'D4', name: 'Personal Quality',       items: 1 },
   ];
   return (
     <div style={{ background: T.surface, minHeight: '100%' }}>
       <Header
-        title="SK Sungai Pitas"
-        subtitle="Weekly summary - Guru Besar view"
+        title="School Summary"
         back={back}
         right={<Chip tone="navy" mono>Wk 19</Chip>}
       />
-      <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <Card>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-            {[
-              { label: 'Evidence', v: 18, sub: 'this week' },
-              { label: 'Active', v: '7 / 9', sub: 'teachers' },
-              { label: 'Mentor', v: 3, sub: 'check-ins' },
-            ].map((m, i) => (
-              <div key={i} style={{ background: T.surface, padding: 10, borderRadius: 10, textAlign: 'center' }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: T.navy, lineHeight: 1.1 }}>{m.v}</div>
-                <div style={{ fontSize: 10.5, color: T.text2, marginTop: 2 }}>{m.label}</div>
-                <div style={{ fontSize: 9.5, color: T.text3, fontFamily: 'JetBrains Mono, monospace' }}>{m.sub}</div>
+      <div style={{ padding: '14px 14px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {/* Guru Besar identity strip */}
+        <div style={{ padding: '0 2px' }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: T.text, lineHeight: 1.1, letterSpacing: -0.4 }}>
+            Guru Besar Jainal
+          </div>
+          <div style={{ fontSize: 12, color: T.text2, marginTop: 4 }}>
+            SK Pitas · Rural 2 · {teachers.length} teachers
+          </div>
+        </div>
+
+        {/* Weekly Digest hero card - matches the navy block in the mockup */}
+        <div style={{
+          background: T.navyDeep, color: '#fff',
+          borderRadius: 16, padding: 16,
+          position: 'relative', overflow: 'hidden',
+          boxShadow: T.shadow2,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 28, height: 28, borderRadius: 8,
+              background: 'rgba(255,255,255,0.12)', color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Icon name="record" size={14} stroke={2} />
+            </div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700 }}>Weekly Digest · Wk 19, 2026</div>
+              <div style={{ fontSize: 10.5, opacity: 0.7, marginTop: 1 }}>Sent automatically · no login needed</div>
+            </div>
+          </div>
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', margin: '12px 0' }} />
+          <div style={{ fontSize: 13, fontWeight: 700 }}>SK Pitas — this week</div>
+          <div style={{ fontSize: 12, opacity: 0.85, marginTop: 4, lineHeight: 1.55 }}>
+            5 of {teachers.length} teachers active · 7 modules completed · 13 evidence items submitted, 5 queued offline.
+          </div>
+
+          {/* SGM 2.0 activity bullet list */}
+          <div style={{
+            marginTop: 14, padding: 12, borderRadius: 10,
+            background: 'rgba(255,255,255,0.08)',
+          }}>
+            <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8, letterSpacing: 0.4 }}>SGM 2.0 activity</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              {sgmActivity.map(d => (
+                <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11.5 }}>
+                  <Dot color={T.teal} size={5} />
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, opacity: 0.85 }}>{d.id}</span>
+                  <span style={{ flex: 1 }}>{d.name}</span>
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', opacity: 0.85 }}>{d.items} items</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 2x2 KPI grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          {[
+            { icon: 'user',     label: 'Active teachers',   v: '5 / 9', tone: T.navy },
+            { icon: 'book',     label: 'Modules completed', v: '7',     tone: T.navy },
+            { icon: 'record',   label: 'Evidence submitted',v: '13',    tone: T.success },
+            { icon: 'sync',     label: 'Queued offline',    v: '5',     tone: T.queue },
+          ].map((m, i) => (
+            <div key={i} style={{
+              background: T.card, border: `1px solid ${T.border}`,
+              borderRadius: 12, padding: 12, boxShadow: T.shadow1,
+            }}>
+              <Icon name={m.icon} size={16} color={m.tone} />
+              <div style={{ fontSize: 11, color: T.text2, marginTop: 6 }}>{m.label}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: T.text, lineHeight: 1, marginTop: 4, letterSpacing: -0.5 }}>
+                {m.v}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Who may need support */}
+        <div style={{
+          background: T.card, border: `1px solid ${T.border}`,
+          borderRadius: 14, padding: 14, boxShadow: T.shadow1,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: T.text }}>Who may need support</div>
+            <Chip tone="warn" mono>{needSupport.length} teachers</Chip>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {needSupport.map((t, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '8px 0', borderTop: i === 0 ? 'none' : `1px dashed ${T.border}`,
+              }}>
+                <Dot color={t.status === 'inactive' ? T.queue : T.warn} size={9} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{t.name}</div>
+                  <div style={{ fontSize: 10.5, color: T.text3, fontFamily: 'JetBrains Mono, monospace' }}>
+                    last {t.last} · {t.d}
+                  </div>
+                </div>
+                <Chip tone={t.status === 'inactive' ? 'queue' : 'warn'} mono>
+                  {t.status === 'inactive' ? 'inactive' : 'low'}
+                </Chip>
               </div>
             ))}
           </div>
-        </Card>
+        </div>
 
-        <Card>
+        {/* Full teacher roster - kept from original */}
+        <div style={{
+          background: T.card, border: `1px solid ${T.border}`,
+          borderRadius: 14, padding: 14, boxShadow: T.shadow1,
+        }}>
           <SectionHead title="By teacher" right={<Chip mono>{teachers.length} staff</Chip>} />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {teachers.map((t, i) => (
@@ -199,21 +302,25 @@ function LeaderDigest({ s, back }) {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{t.name}</div>
                   <div style={{ fontSize: 11, color: T.text2, fontFamily: 'JetBrains Mono, monospace' }}>
-                    last {t.last} - {t.d}
+                    last {t.last} · {t.d}
                   </div>
                 </div>
                 <Chip tone={t.items >= 5 ? 'success' : t.items > 0 ? 'navy' : 'queue'} mono>{t.items} ev</Chip>
               </div>
             ))}
           </div>
-        </Card>
+        </div>
 
-        <Card>
+        {/* Suggested actions - kept from original */}
+        <div style={{
+          background: T.card, border: `1px solid ${T.border}`,
+          borderRadius: 14, padding: 14, boxShadow: T.shadow1,
+        }}>
           <SectionHead title="Suggested actions" />
           <ActionRow color={T.warn} text="Check in with Rosli, 14 days inactive" />
           <ActionRow color={T.success} text="Recognise Liana for D1+D2 streak (3 weeks)" />
           <ActionRow color={T.navy} text="Schedule cluster meet at PKG Pitas, 2 ready to share" />
-        </Card>
+        </div>
       </div>
     </div>
   );

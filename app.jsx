@@ -11,14 +11,16 @@ const SCENARIOS = [
     goal: 'Apply a low-bandwidth literacy routine in class and log it toward SGM 2.0 without internet.',
     decision: 'Liana confirms one teaching routine works in her actual classroom and earns SGM 2.0 credit that survives a transfer.',
     steps: [
-      { tab: 'home',    note: 'Liana opens the app at school. The compact status pill shows "Offline".' },
+      { tab: 'welcome', note: 'Liana opens CikguSync for the first time. She picks Bahasa Malaysia, sees the offline-first hint, taps Start.' },
+      { tab: 'home',    note: 'Home loads instantly even though the status pill shows "Offline".' },
       { tab: 'modules', note: 'She downloaded M-156 last week during the morning 4G window. Tap Modules.' },
       { tab: 'module',  note: 'Open the module offline. Complete chapters and tap "Mark complete".' },
       { tab: 'capture', note: 'Tap "Add evidence". Pick a sample classroom photo. Faces blur on device (NFR7).' },
       { tab: 'capture', note: 'Tag the photo to SGM 2.0 domain D2 (Instructional Practice). Add a one-line reflection.' },
       { tab: 'capture', note: 'Tap "Save on this phone". The item enters the local sync queue.' },
-      { tab: 'home',    note: 'Toggle "Online" after arriving at NADI Nabawan. Queue syncs idempotently.' },
-      { tab: 'record',  note: 'Open Record. The new evidence is credited under D2 and counts toward PPB.' },
+      { tab: 'sync',    note: 'Open Sync queue. The new item shows as Queued, plus one earlier item awaiting retry.' },
+      { tab: 'home',    note: 'Toggle "Online" after arriving at NADI Nabawan. Queue syncs idempotently (NFR9).' },
+      { tab: 'record',  note: 'Open Record. The new evidence is credited under D2 and the Data-use receipt explains who can see what.' },
     ],
   },
   {
@@ -53,6 +55,23 @@ const SCENARIOS = [
       { tab: 'dist',  note: 'Tap "Export" for CSV with SGM 2.0 + ICT-CFT mapping. Idempotent IDs prevent double-count.' },
     ],
   },
+  {
+    // Scenario 4: walks through the four edge-case screens (Figure 4) so they
+    // can be shown live during the demo instead of described verbally.
+    id: 's4',
+    persona: 'teacher',
+    title: 'Scenario 4 - The four edge-case states (Figure 4)',
+    duration: '1 min',
+    role: 'Any teacher hitting a system limit',
+    goal: 'Show how the prototype handles the four predictable failure modes without losing data or trust.',
+    decision: 'Reviewer sees that each failure mode has a clear screen, a primary action, and a graceful fallback.',
+    steps: [
+      { tab: 'edge-blocked',    note: 'Download blocked - teacher tries to download a new module while offline. App is honest about the limit, points to NADI.' },
+      { tab: 'edge-upload',     note: 'Upload failed - network dropped mid-upload. Evidence is safe on the phone; auto-retry queued (NFR9).' },
+      { tab: 'edge-incomplete', note: 'Incomplete evidence - missing SGM domain, short reflection, face-detection unsure. Three specific issues, one Fix-now button.' },
+      { tab: 'edge-storage',    note: 'Storage low - device near full. Suggests Sync now to free space, or Manage downloads.' },
+    ],
+  },
 ];
 
 const EDGE_CASES = [
@@ -82,6 +101,81 @@ const TEAM = [
   { name: 'Julia Bartelds',   id: '2714351', role: 'Demo focus: privacy, auditability, district dashboard, and edge cases.' },
 ];
 
+// Requirements panel content - functional + non-functional requirements from
+// assignment 2 §6, with the screens in this prototype that demonstrate each.
+// MoSCoW M = must, S = should, C = could.
+const REQUIREMENTS = {
+  functional: [
+    { id: 'FR1', moscow: 'M', screens: ['Modules', 'Module detail'],
+      title: 'Small CPD modules that work offline',
+      body: 'Smartphone-sized CPD modules that can be downloaded for offline use. Bundles capped so they fit a morning 4G window.' },
+    { id: 'FR2', moscow: 'M', screens: ['Add evidence', 'Sync queue'],
+      title: 'Image-first evidence capture',
+      body: 'Image (not video) uploads for classroom evidence tagged to SGM 2.0 skill domains. Optimised for low bandwidth.' },
+    { id: 'FR3', moscow: 'M', screens: ['Sync queue', 'Upload failed'],
+      title: 'Smart submission queue',
+      body: 'Submissions are queued on the device and uploaded automatically when a steady connection is detected.' },
+    { id: 'FR4', moscow: 'S', screens: ['School summary'],
+      title: 'Mentoring dashboard for Guru Besar',
+      body: 'Mentor / mentee check-ins and shared lessons, organised per teacher folder.' },
+    { id: 'FR5', moscow: 'M', screens: ['CPD record', 'School summary'],
+      title: 'CPD log of shared lessons + check-ins',
+      body: 'Log shared lessons, peer observations, mentoring check-ins and submitted evidence — feeds SGM 2.0 PPB.' },
+    { id: 'FR6', moscow: 'S', screens: ['Telegram digest'],
+      title: 'Weekly school summary, no login',
+      body: 'Guru Besar receives a school-wide summary via WhatsApp / Telegram weekly, without opening a new platform.' },
+    { id: 'FR7', moscow: 'S', screens: ['District dashboard'],
+      title: 'District dashboard for PPD / JPN Sabah',
+      body: 'Self-assessments, recognition events and programme participation visible to district officers like Norhaida.' },
+    { id: 'FR8', moscow: 'M', screens: ['Welcome', 'Profile · Language'],
+      title: 'Multi-language interface',
+      body: 'User picks language once at install. Bahasa Malaysia + English at launch; Kadazandusun + Iban as packs.' },
+    { id: 'FR9', moscow: 'M', screens: ['CPD record'],
+      title: 'Replace SPLKPM CPD log',
+      body: 'Everything can be logged in one place — replaces the audit function previously handled by SPLKPM.' },
+  ],
+  nonFunctional: [
+    { id: 'NFR1',  moscow: 'M', screens: ['Status pill', 'Sync queue'],
+      title: 'Connectivity — 14 days fully offline',
+      body: 'Mobile client works fully offline for ≥14 days. Module bundles ≤ 25 MB to fit the morning 4G window.' },
+    { id: 'NFR2',  moscow: 'M', screens: ['—'],
+      title: 'Device compatibility',
+      body: 'Android 11+, ≤ 2 GB RAM, ≤ 200 MB installed. Matches the mid-range phones rural Sabah teachers own.' },
+    { id: 'NFR3',  moscow: 'M', screens: ['All screens'],
+      title: 'Performance — 3 s page load',
+      body: 'Any screen loads in < 3 s on Redmi Note 12-class device, regardless of online state.' },
+    { id: 'NFR4',  moscow: 'M', screens: ['Profile · Sync & data'],
+      title: 'Data cost — ≤ 200 MB / month',
+      body: 'A typical month (4 modules + evidence) stays under 200 MB of mobile data.' },
+    { id: 'NFR5',  moscow: 'M', screens: ['Welcome', 'Profile · Language'],
+      title: 'Localisation BM + EN at launch',
+      body: 'BM + EN at launch. KDZ + IBN strings addable without code changes.' },
+    { id: 'NFR6',  moscow: 'S', screens: ['All screens'],
+      title: 'Accessibility — WCAG 2.1 AA',
+      body: 'Colour contrast and tap target size meet WCAG 2.1 AA. Audio narration for lower-literacy users.' },
+    { id: 'NFR7',  moscow: 'M', screens: ['Add evidence', 'Data-use receipt'],
+      title: 'PDPA + on-device face blur',
+      body: 'Aligned to PDPA 2010 (Amended 2024). Pupil faces blur on-device before upload.' },
+    { id: 'NFR8',  moscow: 'S', screens: ['District dashboard · Export'],
+      title: 'Interoperability — REST + SGM 2.0 + ICT-CFT',
+      body: 'REST APIs aligned to SGM 2.0 + UNESCO ICT-CFT v3 so DELIMa 2.0, Duta Guru, FS4A can integrate.' },
+    { id: 'NFR9',  moscow: 'M', screens: ['Sync queue', 'CPD record'],
+      title: 'Idempotent sync — no duplicates',
+      body: 'Re-uploading a queued evidence item never creates a duplicate in the district dashboard.' },
+    { id: 'NFR10', moscow: 'S', screens: ['Telegram digest', 'School summary'],
+      title: 'No school-side admin role',
+      body: 'All admin sits at PPD level or above. Guru Besar is not burdened with platform management.' },
+    { id: 'NFR11', moscow: 'S', screens: ['Profile · About'],
+      title: 'Sustainability — federal cloud',
+      body: 'Hosted on MyGovCloud or equivalent so per-school operating cost is zero and survives funding cycles.' },
+    { id: 'NFR12', moscow: 'M', screens: ['CPD record', 'District dashboard · Audit log'],
+      title: 'Auditability — replaces SPLKPM',
+      body: 'Every SGM 2.0 recognition event is timestamped, attributable, and exportable in the SPLKPM-replacement format.' },
+  ],
+};
+const MOSCOW_TONE = { M: 'navy', S: 'teal', C: 'default' };
+const MOSCOW_LABEL = { M: 'Must', S: 'Should', C: 'Could' };
+
 // -----------------------------------------------------------------------------
 function App() {
   const [s, set] = useState(() => {
@@ -101,7 +195,7 @@ function App() {
     };
   });
   const [persona, setPersona] = useState('teacher');
-  const [tab, setTab] = useState('home');
+  const [tab, setTab] = useState('welcome');
   const [leaderView, setLeaderView] = useState('chat');
   const [activeScenario, setActiveScenario] = useState('s1');
   const [stepIdx, setStepIdx] = useState(0);
@@ -133,15 +227,21 @@ function App() {
 
   const go = (target) => {
     const map = {
-      home: () => { setPersona('teacher'); setTab('home'); },
-      modules: () => { setPersona('teacher'); setTab('modules'); },
-      module: () => { setPersona('teacher'); setTab('module'); },
-      capture: () => { setPersona('teacher'); setTab('capture'); },
-      record: () => { setPersona('teacher'); setTab('record'); },
-      profile: () => { setPersona('teacher'); setTab('profile'); },
-      chat: () => { setPersona('leader'); setLeaderView('chat'); },
-      digest: () => { setPersona('leader'); setLeaderView('digest'); },
-      dist: () => { setPersona('district'); },
+      welcome:    () => { setPersona('teacher'); setTab('welcome'); },
+      home:       () => { setPersona('teacher'); setTab('home'); },
+      modules:    () => { setPersona('teacher'); setTab('modules'); },
+      module:     () => { setPersona('teacher'); setTab('module'); },
+      capture:    () => { setPersona('teacher'); setTab('capture'); },
+      record:     () => { setPersona('teacher'); setTab('record'); },
+      profile:    () => { setPersona('teacher'); setTab('profile'); },
+      sync:       () => { setPersona('teacher'); setTab('sync'); },
+      blocked:    () => { setPersona('teacher'); setTab('edge-blocked'); },
+      uploadFail: () => { setPersona('teacher'); setTab('edge-upload'); },
+      incomplete: () => { setPersona('teacher'); setTab('edge-incomplete'); },
+      storage:    () => { setPersona('teacher'); setTab('edge-storage'); },
+      chat:       () => { setPersona('leader'); setLeaderView('chat'); },
+      digest:     () => { setPersona('leader'); setLeaderView('digest'); },
+      dist:       () => { setPersona('district'); },
     };
     (map[target] || (() => {}))();
   };
@@ -152,7 +252,9 @@ function App() {
     const step = sc.steps[i];
     if (sc.persona === 'teacher') {
       setPersona('teacher');
-      if (['home','modules','module','capture','record','profile'].includes(step.tab)) setTab(step.tab);
+      const allowed = ['welcome','home','modules','module','capture','record','profile','sync',
+                       'edge-blocked','edge-upload','edge-incomplete','edge-storage'];
+      if (allowed.includes(step.tab)) setTab(step.tab);
     } else if (sc.persona === 'leader') {
       setPersona('leader');
       setLeaderView(step.tab === 'digest' ? 'digest' : 'chat');
@@ -262,14 +364,27 @@ function Stage({ persona, tab, setTab, s, set, go, leaderView, setLeaderView }) 
         <AndroidDevice width={360} height={620} dark={s.theme === 'dim'}>
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: T.surface }}>
             <div style={{ flex: 1, overflow: 'auto' }}>
-              {tab === 'home'     && <HomeScreen s={s} set={set} go={(t) => setTab(t)} />}
-              {tab === 'modules'  && <ModulesScreen s={s} set={set} go={(t) => setTab(t)} />}
-              {tab === 'module'   && <ModuleDetailScreen s={s} set={set} go={(t) => setTab(t)} />}
-              {tab === 'capture'  && <CaptureScreen s={s} set={set} go={(t) => setTab(t)} />}
-              {tab === 'record'   && <RecordScreen s={s} set={set} go={(t) => setTab(t)} />}
-              {tab === 'profile'  && <ProfileScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'welcome'        && <WelcomeScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'home'           && <HomeScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'modules'        && <ModulesScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'module'         && <ModuleDetailScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'capture'        && <CaptureScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'record'         && <RecordScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'profile'        && <ProfileScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'sync'           && <SyncQueueScreen s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'edge-blocked'   && <EdgeCaseScreen kind="blocked"      s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'edge-upload'    && <EdgeCaseScreen kind="uploadFailed" s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'edge-incomplete'&& <EdgeCaseScreen kind="incomplete"   s={s} set={set} go={(t) => setTab(t)} />}
+              {tab === 'edge-storage'   && <EdgeCaseScreen kind="storage"      s={s} set={set} go={(t) => setTab(t)} />}
             </div>
-            <BottomNav tab={tab === 'module' ? 'modules' : tab} setTab={setTab} s={s} />
+            {tab !== 'welcome' && (
+              <BottomNav tab={
+                tab === 'module' ? 'modules' :
+                tab === 'sync' ? 'home' :
+                tab.startsWith('edge-') ? 'home' :
+                tab
+              } setTab={setTab} s={s} />
+            )}
           </div>
         </AndroidDevice>
       )}
@@ -345,12 +460,13 @@ function DemoPanel({ panel, setPanel, activeScenario, stepIdx, runStep, s, set }
       display: 'flex', flexDirection: 'column', minHeight: 0,
     }}>
       {/* Tabs */}
-      <div style={{ display: 'flex', borderBottom: `1px solid ${T.border}` }}>
+      <div style={{ display: 'flex', borderBottom: `1px solid ${T.border}`, flexWrap: 'wrap' }}>
         {[
-          { id: 'scenarios', label: 'Scenarios' },
-          { id: 'edges',     label: 'Edge cases' },
-          { id: 'team',      label: 'Contributions' },
-          { id: 'intro',     label: 'Intro' },
+          { id: 'scenarios',    label: 'Scenarios' },
+          { id: 'edges',        label: 'Edge cases' },
+          { id: 'requirements', label: 'Requirements' },
+          { id: 'team',         label: 'Contributions' },
+          { id: 'intro',        label: 'Intro' },
         ].map(t => {
           const active = panel === t.id;
           return (
@@ -366,10 +482,11 @@ function DemoPanel({ panel, setPanel, activeScenario, stepIdx, runStep, s, set }
         })}
       </div>
       <div style={{ flex: 1, overflow: 'auto', padding: '14px 16px 24px' }}>
-        {panel === 'intro' &&     <IntroPanel />}
-        {panel === 'scenarios' && <ScenariosPanel sc={sc} stepIdx={stepIdx} runStep={runStep} />}
-        {panel === 'edges' &&     <EdgesPanel />}
-        {panel === 'team' &&      <TeamPanel />}
+        {panel === 'intro' &&        <IntroPanel />}
+        {panel === 'scenarios' &&    <ScenariosPanel sc={sc} stepIdx={stepIdx} runStep={runStep} />}
+        {panel === 'edges' &&        <EdgesPanel />}
+        {panel === 'requirements' && <RequirementsPanel />}
+        {panel === 'team' &&         <TeamPanel />}
       </div>
     </div>
   );
@@ -429,6 +546,10 @@ function ScenariosPanel({ sc, stepIdx, runStep }) {
       <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
         {SCENARIOS.map(x => {
           const active = x.id === sc.id;
+          const label = x.id === 's1' ? 'Liana'
+                      : x.id === 's2' ? 'Jainal'
+                      : x.id === 's3' ? 'Norhaida'
+                      : 'Edges';
           return (
             <button key={x.id} onClick={() => runStep(x, 0)} style={{
               flex: 1, border: 'none',
@@ -441,7 +562,7 @@ function ScenariosPanel({ sc, stepIdx, runStep }) {
               <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, opacity: 0.85 }}>
                 {x.id.toUpperCase()}
               </div>
-              <div style={{ marginTop: 3 }}>{x.persona === 'teacher' ? 'Liana' : x.persona === 'leader' ? 'Jainal' : 'Norhaida'}</div>
+              <div style={{ marginTop: 3 }}>{label}</div>
             </button>
           );
         })}
@@ -547,6 +668,90 @@ function EdgesPanel() {
         Pupil-facing client, live video training, features requiring continuous school internet,
         full translation into all 30 Sabah languages, full external-system integration (postponed
         until institutional API agreements with DELIMa, FS4A, Duta Guru are in place).
+      </div>
+    </div>
+  );
+}
+
+function RequirementsPanel() {
+  const [tab, setTab] = useState('fr');
+  const items = tab === 'fr' ? REQUIREMENTS.functional : REQUIREMENTS.nonFunctional;
+  return (
+    <div>
+      <div style={{ fontSize: 11, fontWeight: 700, color: T.text3, letterSpacing: 0.6, textTransform: 'uppercase' }}>
+        Assignment 2 - §6 - traceability
+      </div>
+      <div style={{ fontSize: 16, fontWeight: 700, marginTop: 6, lineHeight: 1.3 }}>
+        Requirements covered by this prototype
+      </div>
+      <div style={{ fontSize: 12, color: T.text2, marginTop: 6, lineHeight: 1.5 }}>
+        Each row maps a requirement from Assignment 2 §6 to the screen(s) in the prototype
+        that demonstrate it. MoSCoW priority shown as a chip on the right.
+      </div>
+
+      <div style={{ display: 'flex', gap: 6, marginTop: 14 }}>
+        {[
+          { id: 'fr',  label: `Functional - ${REQUIREMENTS.functional.length}` },
+          { id: 'nfr', label: `Non-functional - ${REQUIREMENTS.nonFunctional.length}` },
+        ].map(t => {
+          const active = tab === t.id;
+          return (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              flex: 1, border: 'none',
+              background: active ? T.navy : T.surface,
+              color: active ? '#fff' : T.text2,
+              padding: '9px 6px', borderRadius: 10, cursor: 'pointer',
+              fontSize: 12, fontWeight: 700, fontFamily: 'inherit',
+            }}>{t.label}</button>
+          );
+        })}
+      </div>
+
+      <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {items.map(r => (
+          <div key={r.id} style={{
+            border: `1px solid ${T.border}`, borderRadius: 12, padding: 12,
+            background: T.card,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                <span style={{
+                  fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700,
+                  color: T.navy, background: 'var(--cs-navy-soft)',
+                  padding: '3px 7px', borderRadius: 6, flexShrink: 0,
+                }}>{r.id}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: T.text, lineHeight: 1.3 }}>
+                  {r.title}
+                </span>
+              </div>
+              <Chip tone={MOSCOW_TONE[r.moscow] || 'default'} mono>
+                {MOSCOW_LABEL[r.moscow]}
+              </Chip>
+            </div>
+            <div style={{ fontSize: 11.5, color: T.text2, marginTop: 8, lineHeight: 1.55 }}>
+              {r.body}
+            </div>
+            <div style={{ marginTop: 10, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+              {r.screens.map((sc, i) => (
+                <span key={i} style={{
+                  fontSize: 10.5, fontWeight: 600,
+                  background: T.surface2, color: T.text2,
+                  padding: '3px 8px', borderRadius: 999,
+                }}>{sc}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        marginTop: 14, padding: 12, background: T.tealSoft, borderRadius: 10,
+        fontSize: 11.5, color: T.tealDark, lineHeight: 1.5,
+      }}>
+        <div style={{ fontWeight: 700, marginBottom: 4 }}>MoSCoW summary (Assignment 2 §6.3)</div>
+        <div><b>Must</b>: FR1, FR2, FR3, FR5, FR9, NFR1, NFR2, NFR3, NFR4, NFR7, NFR9, NFR12.</div>
+        <div><b>Should</b>: FR4, FR6, FR7, NFR6, NFR8, NFR10, NFR11.</div>
+        <div><b>Could</b>: FR8 (extra languages beyond BM/EN), NFR5 extension to Iban.</div>
       </div>
     </div>
   );
