@@ -133,8 +133,9 @@ function RecordScreen({ s, set, go }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
           }}><Icon name="user" size={20} /></div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 15, fontWeight: 600, color: T.ink }}>Cikgu Liana binti Hassan</div>
-            <div style={{ fontSize: 12, fontWeight: 400, color: T.ink3, marginTop: 2 }}>SK Nabawan · DG41 · Tier Rural 2</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: T.ink }}>Cikgu Liana</div>
+            <div style={{ fontSize: 12, fontWeight: 400, color: T.ink3, marginTop: 2 }}>SK Nabawan · Year 4 Bahasa Inggeris</div>
+            <div style={{ fontSize: 11, fontWeight: 500, color: T.ink3, marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>DG41 · Tier Rural 2</div>
           </div>
         </div>
 
@@ -171,6 +172,9 @@ function RecordScreen({ s, set, go }) {
 
         {/* Data-use receipt */}
         <DataReceipt s={s} />
+
+        {/* Data governance footer - retention rules + PPD ombudsperson */}
+        <DataGovernanceFooter s={s} />
       </ScreenBody>
     </>
   );
@@ -200,7 +204,8 @@ function ProfileScreen({ s, set, go }) {
           }}>LH</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 16, fontWeight: 700, color: T.ink }}>Cikgu Liana</div>
-            <div style={{ fontSize: 12, color: T.ink3, marginTop: 2 }}>SK Nabawan · DG41 · Tier Rural 2</div>
+            <div style={{ fontSize: 12, color: T.ink3, marginTop: 2 }}>SK Nabawan · Year 4 Bahasa Inggeris</div>
+            <div style={{ fontSize: 11, color: T.ink3, marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>DG41 · Tier Rural 2</div>
           </div>
         </div>
         <Field label={tx(s, 'chooseLanguage')}>

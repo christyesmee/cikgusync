@@ -76,6 +76,43 @@ function SyncQueueScreen({ s, set, go }) {
 }
 
 // -----------------------------------------------------------------------------
+// (DataReceipt expansion - retention + ombudsperson contact)
+// The base DataReceipt in components.jsx covers the four core lines from the
+// spec. Adding retention + ombudsperson rows here as a separate small atom
+// the CPD record renders right after the receipt, so the original component
+// stays exactly matching its spec section.
+// -----------------------------------------------------------------------------
+function DataGovernanceFooter({ s }) {
+  return (
+    <div style={{
+      background: T.surface, border: `1px solid ${T.line}`, borderRadius: 12, padding: 14,
+      display: 'flex', flexDirection: 'column', gap: 10,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Icon name="shield" size={16} color={T.ink2} />
+        <div style={{ fontSize: 13, fontWeight: 600, color: T.ink }}>Data governance</div>
+      </div>
+      <div style={{ fontSize: 12, lineHeight: '18px', color: T.ink2 }}>
+        <span style={{ fontWeight: 600 }}>{tx(s, 'duRetention')}</span>{' '}
+        <span style={{ fontWeight: 400 }}>{tx(s, 'duRetentionBody')}</span>
+      </div>
+      <a href="mailto:ombudsperson@ppd.keningau.my" style={{
+        display: 'flex', alignItems: 'center', gap: 8,
+        padding: '10px 12px', borderRadius: 10,
+        background: T.peachPale, color: T.peach,
+        textDecoration: 'none', fontSize: 12, lineHeight: '18px',
+      }}>
+        <Icon name="bell" size={14} stroke={1.8} />
+        <span>
+          <span style={{ fontWeight: 600 }}>{tx(s, 'duOmbudsperson')}</span>{' '}
+          <span style={{ color: T.ink2, fontWeight: 400 }}>{tx(s, 'duOmbudspersonBody')}</span>
+        </span>
+      </a>
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
 // 7. Edge case template (Figure 4)
 // -----------------------------------------------------------------------------
 const EDGE_DEFS = {
@@ -166,4 +203,4 @@ function EdgeCaseScreen({ kind, s, set, go }) {
   );
 }
 
-Object.assign(window, { SyncQueueScreen, EdgeCaseScreen, EDGE_DEFS });
+Object.assign(window, { SyncQueueScreen, EdgeCaseScreen, EDGE_DEFS, DataGovernanceFooter });

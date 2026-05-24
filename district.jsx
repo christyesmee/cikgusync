@@ -235,28 +235,70 @@ function DistrictApp({ s }) {
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr', gap: 14 }}>
           <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 14, padding: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-              <div style={{ ...TYPE.eyebrow }}>Recent recognition events — audit log</div>
+              <div style={{ ...TYPE.eyebrow }}>Audit log — view · export · delete · submit</div>
               <Badge tone="neutral">idempotent · SHA-256</Badge>
             </div>
+            <div style={{ fontSize: 11.5, color: T.ink3, marginBottom: 10, lineHeight: '16px' }}>
+              Per §8: every access to teacher CPD data is logged. Auditors can replay submit, view,
+              export and delete events to verify the data was used for support, not punishment.
+            </div>
             <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  {['ID','Actor','Action','School / Domain','When','Status'].map(h => (
+                    <th key={h} style={{
+                      textAlign: 'left', padding: '6px 8px 8px', color: T.ink3,
+                      fontWeight: 700, fontSize: 10.5, letterSpacing: 0.4, textTransform: 'uppercase',
+                      borderBottom: `1px solid ${T.line}`,
+                    }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
               <tbody>
                 {[
-                  ['EV-0094','Liana Anak Gunsalam',  'SK Nabawan Utara', 'D2', '11 May 07:31', 'synced'],
-                  ['EV-0091','Liana Anak Gunsalam',  'SK Nabawan Utara', 'D1', '09 May 07:12', 'synced'],
-                  ['EV-0087','Faridah binti Yusof',  'SK Sungai Pitas',  'D3', '08 May 18:04', 'synced'],
-                  ['EV-0082','Azlan bin Karim',      'SK Sungai Pitas',  'D1', '07 May 09:55', 'synced'],
+                  // id,         actor,                action,    target,                          when,             status
+                  ['EV-0094','Cikgu Liana',           'submit', 'SK Nabawan · D2',               '11 May 07:31', 'synced',  'success'],
+                  ['EV-0091','Cikgu Liana',           'submit', 'SK Nabawan · D1',               '09 May 07:12', 'synced',  'success'],
+                  ['EX-0042','Pegawai Norhaida',      'export', 'BPG · CSV · 30-day · all',      '10 May 16:02', 'logged',  'neutral'],
+                  ['VW-1138','Guru Besar Jainal',     'view',   'SK Sungai Pitas · weekly digest','10 May 09:14', 'logged',  'neutral'],
+                  ['EV-0087','Faridah binti Yusof',   'submit', 'SK Sungai Pitas · D3',          '08 May 18:04', 'synced',  'success'],
+                  ['DL-0009','Cikgu Liana',           'delete', 'EV-0044 (own draft)',           '07 May 21:30', 'removed', 'warning'],
+                  ['EV-0082','Azlan bin Karim',       'submit', 'SK Sungai Pitas · D1',          '07 May 09:55', 'synced',  'success'],
                 ].map((r, i) => (
                   <tr key={i} style={{ borderTop: i ? `1px dashed ${T.line}` : 'none' }}>
                     <td style={{ ...tdStyle, fontFamily: 'JetBrains Mono, monospace', color: T.ink3 }}>{r[0]}</td>
                     <td style={tdStyle}>{r[1]}</td>
-                    <td style={{ ...tdStyle, color: T.ink2 }}>{r[2]}</td>
-                    <td style={tdStyle}><Badge tone="neutral">{r[3]}</Badge></td>
+                    <td style={tdStyle}><ActionChip kind={r[2]} /></td>
+                    <td style={{ ...tdStyle, color: T.ink2 }}>{r[3]}</td>
                     <td style={{ ...tdStyle, fontFamily: 'JetBrains Mono, monospace', color: T.ink2 }}>{r[4]}</td>
-                    <td style={tdStyle}><Badge tone="success">{r[5]}</Badge></td>
+                    <td style={tdStyle}><Badge tone={r[6]}>{r[5]}</Badge></td>
                   </tr>
                 ))}
               </tbody>
             </table>
+
+            {/* PPD-level ombudsperson contact strip - §5.2 mitigation */}
+            <div style={{
+              marginTop: 14, padding: '10px 12px', borderRadius: 10,
+              background: T.peachPale, border: `1px solid #F4D6B8`,
+              display: 'flex', alignItems: 'flex-start', gap: 10,
+            }}>
+              <Icon name="shield" size={16} color={T.peach} style={{ flexShrink: 0, marginTop: 1 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: T.peach }}>
+                  PPD Keningau data ombudsperson
+                </div>
+                <div style={{ fontSize: 11.5, color: T.ink2, marginTop: 3, lineHeight: '16px' }}>
+                  Teachers and school leaders can raise complaints about misuse, surveillance or
+                  unfair ranking. Ombudsperson reviews audit logs and can suspend access.
+                </div>
+                <a href="mailto:ombudsperson@ppd.keningau.my" style={{
+                  display: 'inline-block', marginTop: 4,
+                  fontSize: 11.5, fontWeight: 600, color: T.peach,
+                  textDecoration: 'underline', textUnderlineOffset: 2,
+                }}>ombudsperson@ppd.keningau.my</a>
+              </div>
+            </div>
           </div>
 
           <div style={{ background: T.surface, border: `1px solid ${T.line}`, borderRadius: 14, padding: 16 }}>
@@ -286,7 +328,7 @@ function DistrictApp({ s }) {
               marginTop: 12, padding: 10, borderRadius: 8,
               background: T.surface2, fontSize: 11.5, color: T.ink2, lineHeight: 1.55,
             }}>
-              Pair PPD visits with the nearest <b>NADI centre</b> so teachers can sync queued evidence on the same day (MCMC NADI Ambassador Sabah, 2025).
+              Pair PPD visits with the nearest <b>NADI or PKG Pitas centre</b> so teachers can sync queued evidence on the same day (MCMC NADI Ambassador Sabah, 2025).
             </div>
           </div>
         </div>
@@ -303,6 +345,19 @@ const selectStyle = {
   border: `1px solid ${T.line}`, background: T.surface, color: T.ink,
   fontFamily: 'inherit', cursor: 'pointer',
 };
+
+// Small chip for audit-log actions. Colour-codes intent so reviewers can scan
+// for delete / export rows quickly - those are the ones most relevant to the
+// §8 misuse-of-data risk.
+function ActionChip({ kind }) {
+  const map = {
+    submit: { tone: 'success', label: 'SUBMIT' },
+    view:   { tone: 'neutral', label: 'VIEW' },
+    export: { tone: 'warning', label: 'EXPORT' },
+    delete: { tone: 'error',   label: 'DELETE' },
+  }[kind] || { tone: 'neutral', label: kind.toUpperCase() };
+  return <Badge tone={map.tone}>{map.label}</Badge>;
+}
 
 function Kpi({ icon, label, v, sub, valueColor, subColor }) {
   return (
@@ -385,4 +440,4 @@ function DistrictDashboardScreen({ s }) {
   return <DistrictApp s={s} />;
 }
 
-Object.assign(window, { DistrictApp, DistrictDashboardScreen, Kpi, ExportModal });
+Object.assign(window, { DistrictApp, DistrictDashboardScreen, Kpi, ExportModal, ActionChip });

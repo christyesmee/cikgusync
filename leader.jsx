@@ -157,8 +157,12 @@ function DigestBar({ label, v, cap }) {
 // School Summary - tap-through view from the Telegram digest. Spec §6.1.
 // -----------------------------------------------------------------------------
 function SchoolSummaryScreen({ s, set, go, onBack }) {
+  // Note: 'Cikgu Liana' is the same teacher who appears on the teacher-side
+  // identity card. Using the same display label everywhere keeps the demo
+  // story coherent across personas (Liana on the phone == Liana in Jainal's
+  // roster == Liana in Norhaida's audit log).
   const teachers = [
-    { name: 'Liana Anak Gunsalam', items: 8, last: '4h',  status: 'active' },
+    { name: 'Cikgu Liana',         items: 8, last: '4h',  status: 'active' },
     { name: 'Faridah binti Yusof', items: 5, last: '1d',  status: 'active' },
     { name: 'Azlan bin Karim',     items: 3, last: '3d',  status: 'active' },
     { name: 'Rosli bin Othman',    items: 0, last: '14d', status: 'inactive' },
