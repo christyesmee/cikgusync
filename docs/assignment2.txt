@@ -1,0 +1,944 @@
+Enhancing Digital Education in Rural Communities
+Digital and Hybrid Teacher Professional
+Development in Rural Sabah, Malaysia
+Assignment 2
+Group 3
+Group members:
+Abdullah Ismael - 2666924
+Ali Al-Kaabi - 2794809
+Daniil Soroka - 2854697
+Esmee Mulder - 2753754
+Julia Bartelds - 2714351
+ICT for the Global South
+Vrije Universiteit Amsterdam
+25-04-2026
+
+-- 1 of 10 --
+
+1. Use Case, Primary Stakeholder,
+and Strategic Goal
+1.1 Use case and geographic focus
+The use case is digital and hybrid teacher training
+in rural Malaysia under low-resource conditions.
+We focus on the Interior Division of Sabah
+(Keningau, Tambunan, Tenom, Nabawan, and
+Sipitang) and nearby rural districts (Pitas, Tongod,
+and Ranau). Three facts make this a good case: eight
+of the ten poorest districts in Malaysia are in Sabah;
+the Sabah State Minister of Education said in
+December 2025 that 300 to 400 rural Sabah schools
+still have no internet (The Star, 2025) and a 2025
+UMS study found that rural Sabah teachers face weak
+infrastructure, heavy workloads, and professional
+isolation (Jaafar et al., 2025).
+1.2 Primary stakeholder
+We assume the primary stakeholder is the Bahagian
+Profesionalisme Guru (BPG), the unit inside the
+Ministry of Education Malaysia (MOE) in charge of
+teacher professional development. It is led by its
+Director, Datuk Dr. Mistirine binti Radin. BPG sets
+training policy, plans CPD programmes, checks that
+in-service training meets national standards, and
+evaluates programmes yearly (MOE, n.d.-a). It sits in
+the same sector as the Institut Pendidikan Guru
+Malaysia (IPGM) and the Institut Aminuddin Baki
+(IAB) (E-Bantuan Malaysia, 2025). BPG is the right
+stakeholder here because it owns teacher training and
+the main programmes behind it, such as PPGB 2.0
+and SGM 2.0 (MOE, 2023; Slideshare, 2024).
+1.3 Strategic goal
+From BPG's point of view, the strategic goal is to
+improve training for rural teachers in Malaysia,
+with a focus on Sabah's Interior Division, so
+teachers can grow their digital teaching skills in
+real rural conditions. The goal aligns with three
+national plans: the Dasar Pendidikan Digital
+(DPD) 2023–2030, the Thirteenth Malaysia Plan
+(RMK-13, 2026–2030), and the Standard Guru
+Malaysia 2.0.
+1.4 Where the goal comes from
+The goal reflects both national policy and the real
+rural problems from the source material: weak
+internet, not enough devices, and poor follow-up after
+training. We assume four pressures on BPG are
+driving it.
+First, national policy. The DPD 2023–2030,
+launched by Minister Fadhlina Sidek on 28
+November 2023, commits MOE to producing
+"digitally fluent pupils." It reports that only 2.2% of
+Malaysian teachers are at advanced digital level
+and 39.9% at intermediate, with rural areas worse
+off (MOE, 2023). RMK-13, tabled on 31 July 2025,
+keeps a "Raise the Floor" pillar for underserved
+regions. Together, these plans make rural teacher
+training a measurable target.
+Second, a teacher shortage. On 9 April 2025, MOE
+launched the Pelan Tindakan Nasional Pendidikan
+2025–2030 to handle a shortage of almost 10,000
+teachers in Maths, English, and science, mostly in
+Sabah, Sarawak, Kelantan, and Terengganu. MOE
+plans to recruit 12,000 new teachers from July 2025,
+plus a six-month intensive programme (PLIG) for
+new graduates (PrezCom, 2025). Many will be posted
+to rural schools, making PPGB 2.0 and its follow-up
+support very important.
+Third, a change in how training is tracked. On 30
+December 2025, Minister Fadhlina Sidek announced
+that the central training tracking system (SPLKPM)
+will be shut down in 2026, to "place full trust" in
+teachers (Utusan Malaysia, 2025). Removing this
+system just as DPD 2023–2030 and RMK-13 start
+means any new solution needs its own way to track
+training.
+Fourth, state-level plans match. JPN Sabah, under
+Director Raisin bin Saidin, runs the Sepakat Sabah
+Hebat (SSH) 2023–2025 plan. Its four pillars mirror
+the national Program Transformasi Sekolah 2025
+(TS25): Effective Leaders, Quality Teachers, PTA
+and Community Support, and Meaningful Learning
+Environment (JPN Sabah, 2022). The "Quality
+Teachers" pillar matches any BPG plan for rural
+digital training, making Sabah a natural fit.
+2. Stakeholders
+The strategic goal involves groups that run the work,
+groups that influence it, and groups affected by the
+result. We list them below with specific names.
+Federal policy and training governance. Bahagian
+Profesionalisme Guru (BPG, MOE) under Datuk Dr
+Mistirine binti Radin owns the teacher training policy
+and the SGM 2.0 standard. Bahagian Sumber dan
+Teknologi Pendidikan (BSTP, MOE) owns the
+DELIMa 2.0 learning platform and runs the Pusat
+Kegiatan Guru (PKG) teacher centres. Institut
+Pendidikan Guru Malaysia (IPGM) trains new
+teachers through its campuses, including IPG
+Kampus Keningau inside the Interior Division.
+Institut Aminuddin Baki (IAB) Cawangan Sabah in
+Kota Kinabalu trains school leaders across Sabah and
+WP Labuan (IAB, 2025).
+State and district. Jabatan Pendidikan Negeri Sabah
+(JPN Sabah) under Raisin bin Saidin runs the SSH
+2023–2025 plan. Each Pejabat Pendidikan Daerah
+(PPD) in the Interior (Keningau, Tambunan, Tenom,
+Nabawan, Sipitang, Pitas) picks schools, tracks
+progress, and sends support. At school level, Guru
+Besar (headmaster) and Penolong Kanan (senior
+Page 2
+
+-- 2 of 10 --
+
+assistant) control teacher time and decide who joins
+training.
+Teachers and mentors. Rural teachers in Sabah are
+the main users whose skills and classroom work
+should improve. They receive the Bayaran Insentif
+Mengikut Lokasi dan Tahap Kesusahan (BIMLTK)
+allowance of RM500/RM1,000/RM1,500 per month
+for Rural 1/2/3 schools (Free Malaysia Today, 2025).
+School digital leads and mentor teachers support peer
+learning — most notably through MDEC's
+#CikguJuaraDigital, where 30 Champion Teachers
+in Sabah have trained 1,434 others since 2020 (Sabah
+Media, 2024).
+Internet and community infrastructure.
+Suruhanjaya Komunikasi dan Multimedia Malaysia
+(MCMC) runs the 131 NADI centres in Sabah. In
+July 2025, it launched the NADI Ambassador Sabah
+pilot, its first programme to list teachers as target
+users (Borneo Post, 2025a). MCMC also runs
+JENDELA Phase 2, which got RM1.4 billion in
+November 2025 for 800 new sites in Sabah over five
+years (Borneo Post, 2025b).
+Industry, foundations, and UN partners. Malaysia
+Digital Economy Corporation (MDEC) runs
+MyDigitalMaker and its teacher arm
+#CikguJuaraDigital, reaching about 80,000 students
+across 800 Sabah schools by mid-2024 (Sabah Media,
+2024). Yayasan PETRONAS runs Program Duta
+Guru (training 4,500 STEM teachers by 2030) and
+the CERDIK device programme. UNICEF Malaysia
+runs the Future Skills for All (FS4A) platform,
+which has both online and offline modes and reached
+43,838 children and 3,721 teachers in 2024 (UNICEF
+Malaysia, 2024). CelcomDigi and Maxis (eKelas,
+added to DELIMa in 2023) are the main telco
+partners.
+Academic partners. Universiti Malaysia Sabah
+(UMS) — mainly its Faculty of Education and the
+Unit for Rural Education Development (UPPLB) —
+provides peer-reviewed research on rural teacher
+conditions (Jaafar et al., 2025).
+Community and parents. Village governance runs
+through the Ketua Kampung (village head), the JKKK
+village committee, and the Ketua Anak Negeri from
+the Native Court system. They affect teacher
+attendance and after-hours access to training sites.
+Parent–Teacher Associations (PIBG) link the school
+to the community. For local-language content (e.g.
+Kadazandusun), the Kadazandusun Cultural
+Association (KDCA), led by Tan Sri Joseph Pairin
+Kitingan (2025–2028 term), is the community
+authority.
+Students in rural schools are the final beneficiaries
+— their learning depends on whether teachers can run
+low-data, practical lessons.
+3. Project Goals and
+ContextSquaREs
+From the strategic goal in Section 1, we identify three
+project goals, one from each of the three stakeholder
+views: the teacher, the school leader, and the people
+who track results at the district and national levels.
+Project Goal 1 (teacher view). Rural teachers should
+be able to get and use practical training even when
+the internet and devices are limited.
+Project Goal 2 (school leader view). Schools should
+support teacher learning through simple peer
+learning, mentoring, and coaching.
+Project Goal 3 (tracking view). District and national
+offices should be able to track, recognise, and scale
+up rural teacher training based on real evidence.
+3.1 ContextSquaRE 1 — Project Goal 1
+Project goal. Rural teachers should be able to get and
+use practical training even when the internet and
+devices are limited.
+Stakeholders. Rural teachers in Sabah Interior, Guru
+Besar, rural pupils, district coaches from JPN Sabah
+and the PPDs, BPG as national policy owner, BSTP
+as owner of DELIMa 2.0, and MCMC NADI centres
+as community infrastructure.
+1. Key Challenges. Teachers in the Interior Division
+deal with weak 4G, few devices, and pupils with
+different resources at home. As of December 2025,
+300 to 400 rural Sabah schools still have no internet.
+Time is tight: a new teacher at a Rural 2 school has
+extra paperwork, drives three or more hours to the
+nearest PKG teacher centre, and has little time for
+live online training. Professional isolation is a known
+problem (Jaafar et al., 2025). Teachers usually stay
+only two to three years before asking for a transfer,
+which makes long training investments less useful.
+2. Existing Solutions. Malaysia already has useful
+pieces in place. DELIMa 2.0 includes a professional
+development module, short certified micro-courses, a
+teacher knowledge-sharing space, and single sign-on
+to Apple, Microsoft, and Google learning tools
+(BSTP, 2025). PPGB 2.0 gives new teachers a
+structured induction and mentoring programme
+(Slideshare, 2024). MDEC's #CikguJuaraDigital has
+30 Champion Teachers in Sabah who have trained
+1,434 others since 2020 (Sabah Media, 2024). The
+131 MCMC NADI centres have internet and training
+space, and the NADI Ambassador Sabah pilot (24
+July 2025) reached teachers for the first time (Borneo
+Post, 2025a). These structures provide a policy and
+platform base rather than a blank starting point.
+3. Shortcomings. Existing support is scattered and
+not well adapted to rural conditions. Getting training
+does not always mean teachers apply it in the
+classroom, especially when the training is generic or
+needs a stable connection. DELIMa 2.0 assumes the
+Page 3
+
+-- 3 of 10 --
+
+user is always online; a 2022 study in Sibu already
+showed similar teacher-adoption and connectivity
+problems (Keling et al., 2025). DELIMa has no
+Kadazandusun or Iban content for teachers. BPG has
+not published a mapping from SGM 2.0 to UNESCO
+ICT-CFT (UNESCO, 2018), which makes rigorous
+curriculum design harder. PKGs and IAB are too far
+to reach in a normal workday, and NADI centres are
+not officially linked to BPG's in-service training
+system.
+4. Proposed Solution Direction. A digital solution
+should provide mobile-friendly, low-bandwidth,
+offline-first training content, ready-to-use classroom
+templates, and asynchronous evidence submission,
+written against SGM 2.0 and DPD 2023–2030 skill
+levels. It should work on cheap Android devices and
+sync whenever a connection is available — over 4G,
+NADI Wi-Fi, or USB sync during a PPD visit.
+Content should be built with #CikguJuaraDigital
+Champion Teachers and include at least Bahasa
+Malaysia and Kadazandusun for relevant modules.
+Training done should count toward PPB credits under
+SGM 2.0, so teachers keep their progress when they
+move schools.
+3.2 ContextSquaRE 2 — Project Goal 2
+Project goal. Schools should support teacher learning
+through simple peer learning, mentoring, and
+coaching.
+Stakeholders. Guru Besar and Penolong Kanan at
+rural schools; IAB Cawangan Sabah for school leader
+training; BPG as national policy owner; JPN Sabah
+and the PPDs; mentor teachers including
+#CikguJuaraDigital; the PKG teacher centres in each
+Interior district; and pupils who benefit from better
+teaching.
+1. Key Challenges. Interior schools are small; a
+typical rural primary school has 4 to 12 teachers ,
+which makes it hard to run a full peer learning group
+inside one school. Guru Besar are often new leaders
+themselves, with little protected time for mentoring.
+Schools in the same cluster can be three or more
+hours apart on unpaved roads, and high turnover
+breaks up any peer learning that starts. When peer
+support happens, it is usually on WhatsApp or
+Telegram: not saved, not official, not recognised.
+Rural timetables have no dedicated time for peer
+learning.
+2. Existing Solutions. IAB Cawangan Sabah runs
+structured training for school leaders (including the
+NPQEL pathway) for Sabah and WP Labuan (IAB,
+2025). The PKG network has 367 centres nationwide
+and is the only MOE training site physically present
+in every Interior district (PKG KPM, 2025). SSH
+2023–2025 lists “Quality Teachers” as one of four
+pillars, giving JPN Sabah a mandate for peer learning
+work (JPN Sabah, 2022). SGM 2.0's "Community
+Engagement" domain recognises peer learning as a
+teacher skill (MOE, 2023). PPGB 2.0 gives new
+teachers a structured induction and mentoring phase.
+3. Shortcomings. IAB's training happens in Kota
+Kinabalu or Tuaran — six to ten hours from some
+Interior districts — so small schools cannot send their
+leader to multi-day courses. PKG visits take teachers
+away from already short-staffed classrooms.
+WhatsApp groups carry no recognition, no archive,
+no quality control, and vanish when a teacher
+transfers. There is no cross-school mentoring system
+after PPGB 2.0 induction ends. SSH 2023–2025
+targets are set at state level, not at the cluster or
+school level where peer learning actually happens.
+4. Proposed Solution Direction. A simple digital
+coordination layer — not a new platform — should
+let mentor teachers and #CikguJuaraDigital schedule
+short asynchronous check-ins with mentees across
+schools, share lesson materials in a searchable cluster
+folder, and log activity against SGM 2.0 "Community
+Engagement" indicators. It should work with the PKG
+cluster structure, not replace it. Guru Besar should see
+it as a dashboard without a new admin login.
+Recognition should attach to small concrete actions
+(one lesson shared, one mentoring check-in, one peer
+observation) instead of bulk attendance hours.
+Offline-first is required: materials made on a day with
+no internet must be submittable later from a NADI
+centre or the teacher's home town on weekend trips.
+3.3 ContextSquaRE 3 — Project Goal 3
+Project goal. District and national offices should be
+able to track, recognise, and scale up rural teacher
+training based on real evidence.
+Stakeholders. BPG as national owner of training
+quality and the SGM 2.0 standard; JPN Sabah and the
+PPDs; BSTP as owner of DELIMa 2.0; IAB
+Cawangan Sabah for school leader results; MCMC
+for connectivity data; and Yayasan PETRONAS and
+UNICEF Malaysia as outside partners with their own
+tracking (Program Duta Guru and FS4A).
+1. Key Challenges. On 30 December 2025, Minister
+Fadhlina Sidek announced that SPLKPM, BPG's
+central training tracking system, will be shut down in
+2026 (Utusan Malaysia, 2025). This happens just as
+DPD 2023–2030 and RMK-13 start asking for more
+measured results. No public dataset breaks down
+teacher digital skill levels for Sabah Interior schools,
+and the 300 to 400 unconnected schools leave no
+trace in platform analytics (The Star, 2025). The data
+we do have is about attendance, not about what
+changed in the classroom. Rural teachers, being
+offline more often, leave less digital trace, so
+measurement is biased toward the already-connected.
+There is no shared dashboard between JPN Sabah and
+BPG for rural teachers as a group.
+2. Existing Solutions. SGM 2.0 includes a
+self-assessment tool covering four skill domains
+(MOE, 2023). DELIMa 2.0 has some teacher-side
+Page 4
+
+-- 4 of 10 --
+
+analytics for modules finished and micro-credentials
+earned (BSTP, 2025). SSH 2023–2025 has a
+four-pillar framework linked to TS25 (JPN Sabah,
+2022). BPG promises yearly impact studies covering
+100% of its programmes (MOE, n.d.-a). Outside
+partners track their own work: Program Duta Guru
+tracks progress toward 4,500 STEM teachers by 2030
+(Yayasan PETRONAS, 2024); FS4A reports on reach
+and use in both online and offline teacher modes
+(UNICEF Malaysia, 2024).
+3. Shortcomings. Attendance and hours are poor
+proxies for teaching change, which is one reason
+SPLKPM was shut down. SGM 2.0 self-assessment is
+not checked or combined across schools. DELIMa
+2.0 analytics only cover online schools, excluding the
+ones that need help most. SSH targets sit at state level
+and do not break down to cluster or teacher. BPG's
+impact studies come out too late to change in-year
+spending. Outside-partner tracking is not connected
+to BPG's, so a teacher doing both Program Duta Guru
+and #CikguJuaraDigital is counted in their systems
+but not nationally. No tracking method exists for the
+rural teacher group that DPD 2023–2030 will be
+judged on.
+4. Proposed Solution Direction. A light,
+offline-tolerant logging tool should support, not
+replace, the SGM 2.0 self-assessment. It should log
+teacher activity even at disconnected schools and
+sync when a connection is available. Recognition
+should link to SGM 2.0 skill domains (knowledge,
+instruction, community, and personal quality) rather
+than raw hours, so teachers do not carry the
+compliance burden that SPLKPM's shutdown was
+meant to remove. A district dashboard should serve
+JPN Sabah and the PPDs, while BPG gets a combined
+national view for DPD 2023–2030 and RMK-13
+reporting. BPG should publish a mapping from SGM
+2.0 to UNESCO ICT-CFT so the dashboard uses
+shared skill categories. The tool should be compatible
+with Program Duta Guru and FS4A from the start, so
+teacher work is counted once and visible everywhere.
+4. Personas
+In the section below, three personas are developed
+and each align with a single ContextSquaRE
+perspective. The personas are based on information
+we found about rural Sabah teachers and the
+institutional structures described in Section 2. The
+naming conventions are derived from Kadazundusun,
+Bajau, and Malay in Sabah Interior.
+Persona 1: Cikgu Liana (rural primary school
+teacher) - Liana Anak Gunsalam is a 26 years old
+female and teaches Sekolah Kebangsaan, English and
+Pendidikan Moral. She obtained a Bachelor of
+Education (TESL), graduated from the IPG Kampus
+Keingau in 2023, and was posted to a Rural 2 school
+in Nabawan district in her second year of working.
+Liana owns an Android phone, a Redmi Note 12 and
+a personal laptop that she bought with a SmartBelanja
+teacher loan. She uses a few apps on a daily basis,
+like: WhatsApp, TikTok, Shopee, Canva and Google
+Classroom. She does have a DELIMa account but she
+is only able to log in about once a month as the 4G of
+the school is quite unreliable. She has a Celcom
+40GB internet card, but if does a 30-minute class, she
+spent all her GBs for that month. Liana is not married
+and lives at the school site because her family home
+is about 4.5 hours removed from the school. She has a
+DG41 base salary and also receives a BIMLTK Rural
+2 allowance. The school has 87 students and 7
+teachers in total. For all these students there is a
+single 4G router that mainly works in the morning
+and has frequent power cuts. Even though Liana
+flagged the internet issue to the State Education
+Minister, the problem has not been solved so far.
+Problems
+Liana wishes to receive more training to be able to
+provide better classes for the students, however the
+closest training location is in Kota Kinabalu, which is
+about 2 days of travel for 1 day of training. Online
+webinars on DELIMa are too heavy to run on the 4G
+connection she has available. The trainings available
+require accessories of modern classrooms, like tablets
+iPads, projectors and computers for each student,
+which are not available for Liana. Jaafar et al. (2025)
+described similar issues for rural teachers: weak
+infrastructure, a heavy workload and professional
+isolation.
+Needs
+Short lessons that do not require live presence, but are
+downloadable at a small memory and low bandwidth,
+so she can use the morning 4G at the school to do so.
+The lessons should be working offline as well, and
+easily transferable to paper if needed. The content
+should be in Bahasa Malaysia and include summaries
+for teachers in Kadazandusun to hand out to the
+student’s parents. There should also be a way for her
+to keep track of her CPD record when she transfers.
+Existing solutions
+There are various small crumbs available, like
+watching YouTube videos when she is in Keningau
+town, or copy lesson ideas from Telegram/WhatsApp
+groups. There was a way to track CPD records, but
+unfortunately SPLKPM will be shut down in 2026
+(Utasan Malaysia, 2025), so right now keeping track
+on paper is a solution.
+Persona 2: Guru Besar Jainal (school leader) -
+Jainal bin Sairin is a 47-year-old male and serves as
+Guru Besar of a 96-pupil Rural 2 Sekolah
+Kebangsaan in Pitas district. He holds a Master of
+Education in Educational Management from UPSI
+(2019) and completed the NPQEL programme
+through IAB Cawangan Sabah in 2022 (IAB, 2025).
+He spent eleven years as a classroom teacher before
+Page 5
+
+-- 5 of 10 --
+
+becoming Guru Besar in 2023. Jainal uses a
+school-issued laptop and his own Samsung Galaxy
+A54. He is confident with WhatsApp, Microsoft
+Word, Excel, and the JPN Sabah e-Operasi system,
+but less so with cloud collaboration tools. He
+manages five active WhatsApp groups covering staff,
+the PIBG, PPD Pitas, his NPQEL alumni network,
+and a kampung committee group for the school.
+Internet at school runs through a 4G modem that
+drops out during heavy rain. Jainal is married with
+three children studying in Kota Kinabalu, whom he
+sees on weekends. He leads 9 teachers, 4 of whom are
+in their first or second posting. His school is 2.5 hours
+from Kota Marudu and 6 hours from Kota Kinabalu
+on partly unpaved roads. He sits on the SSH
+2023–2025 cluster committee for his zone (JPN
+Sabah, 2022) and reports monthly to PPD Pitas.
+Problems
+Jainal must release teachers for CPD without leaving
+classes uncovered, which is structurally impossible
+for a 9-teacher school. IAB courses in Kota Kinabalu
+or Tuaran cost him a teacher for a full week. PPGB
+2.0 induction supports new teachers in their first year,
+but there is no structured mentoring framework after
+that period ends. Peer learning happens informally on
+WhatsApp but is unrecognised, unarchived, and
+disappears when teachers transfer. He is assessed on
+the SSH "Quality Teachers" pillar outcomes but has
+no school-level view linking his teachers' CPD
+activity to those targets. The shutdown of SPLKPM
+removes the only national log he previously consulted
+(Utusan Malaysia, 2025).
+Needs
+Jainal needs a lightweight coordination view, not a
+new platform, showing which of his teachers are
+actively engaged in peer learning across the cluster,
+what evidence they have submitted against SGM 2.0
+domains, and which mentor relationships are active.
+A weekly summary by WhatsApp or email is enough;
+he does not need to log in daily. He wants recognition
+tied to small concrete actions (one lesson shared, one
+peer observation, one mentoring check-in) rather than
+attendance hours, and he needs the tool to be
+offline-tolerant and integrated with existing PKG
+cluster activity rather than running as a parallel
+structure.
+Existing solutions
+Jainal currently runs an informal mentoring system
+through WhatsApp, biweekly staff briefings, and
+occasional cluster meetings at PKG Pitas. He tracks
+teacher CPD hours in a personal Excel sheet and
+nominates one or two teachers per term for
+#CikguJuaraDigital events when MDEC visits the
+district (Sabah Media, 2024). Recognition for peer
+mentoring is verbal or through a paper certificate at
+the end of the school year.
+Persona 3: Pegawai Norhaida (PPD district
+officer) - Norhaida binti Mohd Tahir is a 39-year-old
+female serving as Penolong Pegawai Pendidikan
+Daerah (Sektor Pengurusan Akademik) at PPD
+Keningau, grade DG44. She holds a Master of
+Education in Curriculum from UMS (2020) and spent
+eight years as a secondary school teacher before
+moving to the district level six years ago. Norhaida is
+a confident user of Microsoft 365, Google
+Workspace, and the JPN Sabah reporting suite and
+built a small Power BI dashboard in 2024 for SSH
+reporting. She uses DELIMa 2.0 admin views weekly.
+She works mostly from a desktop in the PPD office in
+Keningau town, where fiber internet is stable, and
+visits schools 2 to 3 days a week with a laptop and 4G
+dongle. Norhaida reports to PPD Keningau and,
+through SSH 2023–2025, to JPN Sabah under Raisin
+bin Saidin (JPN Sabah, 2022). She oversees 64
+primary and secondary schools in the Interior, of
+which she estimates that around a quarter still have
+weak or no internet access, consistent with the 300 to
+400 figure for Sabah as a whole (The Star, 2025). She
+is the contact point for visiting partners including
+MDEC #CikguJuaraDigital, Yayasan PETRONAS
+Duta Guru, and UNICEF FS4A, and is expected to
+feed district-level data into BPG's yearly impact
+studies (MOE, n.d.-a).
+Problems
+The shutdown of SPLKPM (Utusan Malaysia, 2025)
+removes her main central log just as DPD 2023–2030
+and RMK-13 begin demanding measured outcomes.
+SGM 2.0 self-assessment data is not aggregated
+above the school level. DELIMa 2.0 analytics
+exclude offline schools, exactly the schools she most
+needs evidence for. Data from outside partners such
+as Duta Guru, FS4A, and #CikguJuaraDigital arrive
+in different formats and count the same teachers
+separately across systems. She spends roughly two
+days a month manually reconciling spreadsheets for
+cluster reporting.
+Needs
+Norhaida needs a district dashboard that combines
+SGM 2.0 self-assessment data, evidence-based
+teacher activity (lessons shared, peer observations,
+mentor check-ins), and partner-program participation,
+with offline-tolerant data capture so that disconnected
+schools are not invisible in the data. Recognition
+should be tied to SGM 2.0 skill domains rather than
+raw hours, and mapped to the UNESCO ICT
+Competency Framework for Teachers (UNESCO,
+2018) for international comparability. She also needs
+read-only views she can share with school leaders
+like Guru Besar Jainal, and an export format that
+BPG can roll up nationally for DPD 2023–2030
+reporting.
+Existing solutions
+Norhaida currently pulls reports manually from
+DELIMa 2.0, e-Operasi, and partner Excel sheets into
+her own Power BI workbook. She visits NADI
+centres to verify activity at offline schools (Borneo
+Page 6
+
+-- 6 of 10 --
+
+Post, 2025a) and relies on Guru Besar self-reports
+validated by school visits for yearly SSH reporting.
+5. Assumptions for Requirement
+Analysis
+Assumption 1: teachers in Sabah Interior have their
+own phones (Android), however they cannot use 4G
+throughout the day, or at a high bandwidth. Often the
+internet connection only works in the mornings.
+Assumption 2: the Bahagian Profesionalisme Guru
+(BPG) will use the SGM 2.0 because the SPLKPM
+will not continue in 2026 so there is no other way to
+log CPD records (Utusan Malaysia, 2025; Ministry of
+Education Malaysia, 2023).
+Assumption 3: we assume that the solution will not
+replace DELIMa, PPGB, #CikguJuaraDigital,
+Program Duta Guru, and UNICEF FS4A, but it
+should integrate with them. There are already
+substantial investments made in these programs,
+which we do not want to become unused.
+Assumption 4: we also assumed that on average a
+teacher stays about 2-3 years at a Sabah Interior
+school before transferring. We could not find any
+explicit district-level tenure statistics published
+online.
+Assumption 5: there are more than thirty languages in
+Sabah, so we used a default language Bahasa
+Malaysia. Kadazundusun, Iban and English were
+added for some of the modules.
+6. Requirements for our Digital
+Solution
+6.1 Functional requirements
+Functional requirement 1: the solution needs to have
+an option with small modules for CPD that can be
+used on smartphones. They should be able to be
+downloaded so it can later be watched without access
+to the internet.
+Functional requirement 2: the solution focuses more
+on processing images rather than videos because of
+the lower bandwidth internet availability. It should be
+easy for Liana to upload images that account for her
+classroom evidence, e.g., for SGM 2.0 skill domains.
+Functional requirement 3: the solution has a smart
+option where you can queue your submissions and
+keep them loaded on the app. Until there is a steady
+internet connection, the submissions will be uploaded
+online.
+Functional requirement 4: the solution should have a
+mentoring dashboard where mentors and mentees can
+see their check-ins and search for lessons in their own
+folders. This will help Jainal.
+Functional requirement 5: the solution is able to
+provide the option to log shared lessons, peer
+observations, mentoring check-ins, and the submitted
+evidence. This is used for the SGM 2.0 PPB.
+Functional requirement 6: for Guru Besar it is
+important to receive a summary view for the entire
+school without having to login, for example it can be
+sent to his WhatsApp/Telegram on a weekly basis.
+Functional requirement 7: the solution also provides a
+dashboard for the district for PDD/JPN Sabah for
+SGM 2.0. The self-assessments, recognition events,
+and other program participation can be shown here.
+This is important for Norhaida.
+Functional requirement 8: the solution should be
+available in different languages, depending on the
+availability of all 30 languages, we can add a variety
+of languages. The user just chooses their language
+once (because switching languages will use internet
+connection).
+Functional requirement 9: the solution solves the
+issue for the CPD log recordings. It will be possible
+to log everything using the solution.
+6.2 Non-functional requirements
+NFR1 (Connectivity): the mobile client must work
+fully offline for at least 14 days between syncs. A
+complete CPD micro-module bundle must not exceed
+25 MB so that teachers like Liana can download it
+during the morning window when 4G is available at
+school.
+NFR2 (Device compatibility): the mobile client must
+run on Android 11 or higher with no more than 2 GB
+RAM and a maximum installed size of 200 MB. This
+reflects that most rural Sabah teachers own mid-range
+Android phones rather than high-end devices.
+NFR3 (Performance): any screen in the app must load
+within 3 seconds on a Redmi Note 12-class device,
+regardless of whether the device is online or offline at
+that moment.
+NFR4 (Data cost): a typical month of use, covering
+four modules and a set of evidence submissions, must
+consume no more than 200 MB of mobile data. This
+keeps the solution within reach of teachers on a 40
+GB monthly SIM card who cannot afford to spend all
+their data on one platform.
+NFR5 (Localisation): the interface must be available
+in Bahasa Malaysia and English from launch.
+Kadazandusun and Iban strings must be addable
+without changing the underlying code, so that new
+Page 7
+
+-- 7 of 10 --
+
+language support can be rolled out as content
+becomes available.
+NFR6 (Accessibility): the interface must meet
+WCAG 2.1 AA standards for colour contrast and tap
+target size. Parent-facing audio summaries must
+include narration to support lower-literacy users.
+NFR7 (Security and privacy): all teacher and pupil
+data must be stored in line with Malaysia's Personal
+Data Protection Act 2010, as amended in 2024. Pupil
+faces in evidence photos must be blurred
+automatically on the device before upload, so that no
+identifiable images leave the school.
+NFR8 (Interoperability): the system must expose
+REST APIs aligned to SGM 2.0 and UNESCO
+ICT-CFT v3 so that DELIMa 2.0, Program Duta
+Guru, and UNICEF FS4A can pull or push data
+without manual reconciliation by Norhaida or her
+colleagues.
+NFR9 (Reliability): syncing must be idempotent,
+meaning that re-uploading a queued evidence item
+never creates a duplicate entry in the district
+dashboard. This matters most for teachers who submit
+from NADI centres on weekend trips after
+accumulating a backlog.
+NFR10 (Maintainability): no school-side
+administrator role should be needed. All admin
+functions must sit at PPD level or above, so that Guru
+Besar like Jainal are not burdened with platform
+management on top of their existing workload.
+NFR11 (Sustainability): hosting must use federal
+cloud procurement such as MyGovCloud or an
+equivalent, so that the per-school operating cost is
+zero and the solution does not collapse when project
+funding ends.
+NFR12 (Auditability): all SGM 2.0 recognition
+events must be timestamped, attributable to a specific
+teacher, and exportable in a format that replaces the
+audit function previously handled by SPLKPM.
+6.3 MoSCoW prioritisation
+Must have: FR1, FR2, FR3, FR5, FR9, NFR1, NFR2,
+NFR3, NFR4, NFR7, NFR9, and NFR12. Together
+these form the minimum viable loop: a teacher at a
+disconnected school can access training content,
+submit evidence offline, and have it recognised
+against SGM 2.0 once a connection is available.
+Without this core, Liana cannot benefit from the
+solution at all, and the audit gap left by the shutdown
+of SPLKPM in 2026 remains open.
+Should have: FR4, FR6, FR7, FR8 limited to
+DELIMa 2.0 and Program Duta Guru, NFR5 for
+Kadazandusun in selected modules, NFR6, NFR8,
+NFR10, and NFR11. These requirements make the
+solution useful for Jainal and Norhaida and connect it
+to the existing programmes described in Assumption
+3. They are not strictly needed for an individual
+teacher to complete a module, but without them the
+school leader and district officer perspectives from
+ContextSquaREs 2 and 3 receive little value and the
+solution risks running as a parallel structure next to
+DELIMa 2.0 rather than integrating with it.
+Could have: FR8 extended to UNICEF FS4A, and
+NFR5 extended to Iban. These add real value but
+depend on conditions that are not guaranteed for a
+first release: partner agreements with UNICEF
+Malaysia, and enough Iban-speaking Champion
+Teachers available through the #CikguJuaraDigital
+network to co-author content.
+Won't have in this release: a pupil-facing client,
+parent-facing content beyond audio summaries,
+integration with KDCA cultural-content authoring
+tools, and any feature that requires a continuous
+school-side internet connection. These are excluded
+to keep the first release focused on the conditions
+Liana actually faces, as documented by the Sabah
+State Minister of Education in December 2025.
+7. Conclusion
+Rural Sabah's combination of disconnected schools,
+high teacher turnover, and the imminent shutdown of
+SPLKPM creates a situation in which a digital CPD
+solution is both necessary and timely. This report set
+out to identify the requirements for such a solution,
+grounded in the conditions that teachers, school
+leaders, and district officers actually face. Starting
+from BPG's strategic goal and working through three
+ContextSquaREs and three personas, the
+requirements in Section 6 address three connected
+problems: teachers at disconnected schools cannot
+access or complete CPD in any meaningful way, peer
+learning and mentoring at school level is happening
+but leaves no record and disappears when teachers
+transfer, and district and national offices are losing
+their only tracking system just as new policy targets
+come into force.
+The must-have requirements reflect this directly. An
+offline-first mobile client with downloadable
+micro-modules, image-based evidence submission,
+and a queue-and-sync mechanism gives Liana a way
+to complete and document CPD without relying on a
+stable connection. A portable CPD record tied to
+SGM 2.0 skill domains means her progress follows
+her when she transfers, which matters in a context
+Page 8
+
+-- 8 of 10 --
+
+where the average posting lasts two to three years.
+The auditability requirement closes the gap left by the
+shutdown of SPLKPM in 2026, without placing a
+new compliance burden on teachers.
+The should-have requirements extend this to Jainal
+and Norhaida. A lightweight coordination layer for
+peer learning and mentoring, a weekly school
+summary pushed to WhatsApp, and a district
+dashboard that aggregates SGM 2.0 data across
+online and offline schools make the solution useful
+beyond the individual teacher level. Integration with
+DELIMa 2.0 and Program Duta Guru ensures the
+solution fits into existing infrastructure rather than
+duplicating it, which is important given the
+investments already made in those programmes.
+The could-have and won't-have categories reflect
+honest constraints. A national BPG rollup mapped to
+UNESCO ICT-CFT and full FS4A integration are
+worth building eventually, but depend on partner
+agreements and a published SGM 2.0 to ICT-CFT
+mapping that does not yet exist. A pupil-facing client
+and anything requiring continuous school
+connectivity are out of scope for this release entirely,
+in line with the conditions reported by the Sabah
+State Minister of Education in December 2025 (The
+Star, 2025).
+Taken together, the requirements describe a solution
+that is narrow enough to be buildable under real rural
+constraints, and connected enough to the existing
+policy landscape to be adopted and maintained after
+the first release.
+References
+Borneo Post. (2025a, July 24). Sabah first to implement
+NADI Ambassador to boost digital literacy.
+https://www.theborneopost.com/2025/07/24/sabah-firs
+t-to-implement-nadi-ambassador-to-boost-digital-litera
+cy/
+Borneo Post. (2025b, November 18). MCMC: Over RM2
+bln allocated for key initiatives in Sabah.
+https://www.theborneopost.com/2025/11/18/mcmc-ove
+r-rm2-bln-allocated-for-key-initiatives-in-sabah/
+BSTP. (2025). DELIMa 2.0 – Platform pembelajaran digital
+KPM. Bahagian Sumber dan Teknologi Pendidikan,
+Kementerian Pendidikan Malaysia.
+https://www.delima2login.my/
+Department of Statistics Malaysia. (2024). ICT use and
+access by individuals and households survey report
+2024. DOSM.
+E-Bantuan Malaysia. (2025). Carta organisasi KPM terbaru
+2025. https://ebantuan.my/carta-organisasi-kpm/
+Free Malaysia Today. (2025, August 5). Kerajaan belum
+sedia kaji elaun guru pedalaman.
+https://www.freemalaysiatoday.com/category/bahasa/t
+empatan/2025/08/05/kerajaan-belum-sedia-kaji-elaun-
+guru-pedalaman
+IAB. (2025). Institut Aminuddin Baki Cawangan Sabah.
+Kementerian Pendidikan Malaysia.
+https://iab.moe.gov.my/index.php/kenali-iab/iab-cawa
+ngan/iab-cawangan-sabah
+Jaafar, S. et al. (2025). Challenges to the professionalism of
+teachers in rural Sabah. International Journal of
+Research and Innovation in Social Science (IJRISS).
+https://rsisinternational.org/journals/ijriss/article.php?i
+d=2553
+JPN Sabah. (2022). Sepakat Sabah Hebat 2023–2025: Hala
+tuju pendidikan Sabah. Jabatan Pendidikan Negeri
+Sabah.
+https://sites.google.com/moe.gov.my/sepakatsabahheb
+at
+Keling, W., Kutok, P., Suut, L., Amin, A. S., Malek, M. D.
+A., Buncuan, L. K. B., Wan, W. Y., & Chieng, F. Y. L.
+(2025). Assessing the socioeconomic and digital
+inclusion impacts of Pusat Internet in rural Sarawak,
+Malaysia. The Electronic Journal of Information
+Systems in Developing Countries, 91(6), e70038.
+https://doi.org/10.1002/isd2.70038
+Malaysia Digital Economy Corporation. (n.d.).
+MyDigitalMaker teachers training.
+https://mdec.my/mydigitalmaker/teachers-training
+Ministry of Education Malaysia. (2023). Standard Guru
+Malaysia 2.0. Bahagian Profesionalisme Guru, KPM.
+https://www.moe.gov.my/standard-guru-malaysia-20-v
+ersi-e-buku
+Ministry of Education Malaysia. (n.d.-a). Bahagian
+Profesionalisme Guru — Fungsi dan piagam
+pelanggan.
+https://www.moe.gov.my/en/corporate/divisions-and-u
+nits/bahagian-profesionalisme-guru
+Ministry of Education Malaysia. (n.d.-b). Dasar Pendidikan
+Digital 2023–2030.
+https://www.moe.gov.my/dasarmenu/dasar-pendidikan
+-digital
+PKG KPM. (2025). Pusat Kegiatan Guru directory.
+https://linktr.ee/PKGKPM
+PrezCom. (2025, April 9). Pelan Tindakan Nasional
+Pendidikan 2025–2030: KPM umum pelan tindakan
+kecemasan untuk krisis guru.
+https://prezcom.my/2025/04/09/10000-guru-hilang-pe
+ndidikan-malaysia-dalam-krisis-kpm-umum-pelan-tind
+akan-kecemasan/
+Sabah Media. (2024, August 3). Program Jelajah Saya
+Digital perkasa ekonomi Sabah.
+https://sabahmedia.com/2024/08/03/program-jelajah-s
+aya-digital-perkasa-ekonomi-sabah/
+Slideshare. (2024). PPGB 2.0 guru baharu seluruh Malaysia
+2024. Bahagian Profesionalisme Guru, KPM.
+https://www.slideshare.net/slideshow/ppgb-20-guru-ba
+haru-seluruh-malaysia-2024/266732814
+The Star. (2025, December 20). Hundreds of rural schools
+in Sabah still lack internet access, says state education
+minister.
+https://www.thestar.com.my/news/nation/2025/12/20/h
+undreds-of-rural-schools-in-sabah-still-lack-internet-ac
+cess-says-state-education-minister
+Page 9
+
+-- 9 of 10 --
+
+UNESCO. (2018). UNESCO ICT Competency Framework
+for Teachers, Version 3. UNESCO.
+https://unesdoc.unesco.org/ark:/48223/pf0000265721
+UNICEF Malaysia. (2024). UNICEF Malaysia annual
+report 2024.
+https://open.unicef.org/download-pdf?country-name=
+Malaysia&year=2024
+Utusan Malaysia. (2025, December 30). KPM mansuh
+SPLKPM bermula tahun depan.
+https://www.utusan.com.my/nasional/2025/12/kpm-ma
+nsuh-splkpm-bermula-tahun-depan/
+World Bank. (2024). Malaysia economic monitor, April
+2024 — Bending bamboo shoots: Strengthening
+foundational skills. World Bank Group.
+Yayasan PETRONAS. (2024). Program Duta Guru.
+https://www.yayasanpetronas.com.my/focus-area/educ
+ation/
+Page 10
+
+-- 10 of 10 --
+

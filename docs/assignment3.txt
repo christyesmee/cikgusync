@@ -1,0 +1,575 @@
+CikguSync
+An Offline-First CPD Companion for Rural Sabah Teachers
+Digital and Hybrid Teacher Professional Development in Rural Sabah, Malaysia
+Assignment 3
+ICT for the Global South
+Vrije Universiteit Amsterdam
+Group 3
+Abdullah Ismail 2666924
+Ali Al-Kaabi 2794809
+Daniil Soroka 2854697
+Esmee Mulder 2753754
+Julia Bartelds 2714351
+09 May 2026
+
+-- 1 of 8 --
+
+CikguSync — Assignment 3 — Group 3
+1. Overview of the Proposed Solution
+1.1 Problem and core idea
+Assignment 2 showed that rural teachers in Sabah face a
+specific and well-documented gap in professional
+development. Teachers at disconnected schools cannot
+reliably access online CPD, there is no portable way to
+record classroom application, and district and national
+offices are losing their main evidence source as SPLKPM
+shuts down in 2026 (Utusan Malaysia, 2025). These
+problems are not new: weak infrastructure, heavy
+workloads, and professional isolation have been
+consistently reported among rural Sabah teachers (Jaafar
+et al., 2025), and existing platforms like DELIMa 2.0
+were built for connectivity conditions that most Interior
+schools simply lack.
+CikguSync is our proposed response to that gap. The
+name draws directly from the context: 'cikgu' is the
+everyday Malay word for teacher, and 'sync' describes
+what the platform does technically, storing CPD progress
+and classroom evidence on the device first and uploading
+it whenever a connection becomes available. CikguSync
+is built as a progressive web app that teachers can install
+or pin on anto theiroid phonephones basic workflow is:
+download a small CPD module bundle during a morning
+4G window or at a NADI or PKG centre, complete the
+module offline at any point, capture a low-resolution
+photo as classroom evidence, tag it to an SGM 2.0
+domain, and let the app sync the record later when
+connectivity returns.
+The logo on the title page reflects the same ideas. An
+open book sits at the centre as a symbol of professional
+learning. Circular arrows around it represent the
+offline-first sync cycle. The diamond pattern along the
+book's spine is inspired by linangkit, a traditional
+embroidery style from Sabah's Lotud and Rungus
+communities, which grounds the design in Sabah
+specifically rather than in generic edtech imagery. The
+colour palette follows the navy used in Malaysian
+Ministry of Education materials and stays legible as a
+phone home-screen icon.
+CikguSync is not meant to replace DELIMa 2.0, PPGB
+2.0, Program Duta Guru, UNICEF FS4A, or MDEC's
+#CikguJuaraDigital. Those programmes are already
+embedded in the system and represent substantial
+investment. CikguSync sits alongside them as a
+lightweight, offline-tolerant layer that can eventually
+exchange structured records with these systems once
+institutional agreements are in place.
+1.2 Target users and value proposition
+Three personas from Assignment 2 anchor the design.
+Cikgu Liana, a primary teacher in Nabawan, uses offline
+modules to learn practical techniques, photographs
+classroom evidence, and syncs her record when a
+connection is available. Guru Besar Jainal, a school
+leader in Pitas, receives a weekly school summary by
+Telegram or email rather than being expected to manage
+another platform. Pegawai Norhaida, a PPD district
+officer in Keningau, can access an aggregated dashboard
+that includes data from offline schools and exports
+records for SSH and DPD reporting.
+2. Preconditions and Interoperability
+2.1 Preconditions for use
+CikguSync is designed for low-resource conditions, but it
+still rests on a few basic assumptions. Teachers need
+access to a personal or school Android phone capable of
+running a modern browser. Continuous internet is not
+required, but occasional connectivity is needed to
+download modules and sync records. This can happen
+during a morning 4G window, at a NADI or PKG centre,
+at home on weekends, or during a district visit. On the
+institutional side, BPG and PPD would need to approve
+the CPD module structure and its mapping to SGM 2.0
+domains. School leaders need a simple accepted channel
+for receiving summaries, such as Telegram or email, and
+district officers need at least one stable online location for
+reviewing synced data and exporting reports.
+The solution deliberately avoids requirements that would
+be unrealistic in most Interior schools. It does not depend
+on high-speed internet, continuous cloud access, devices
+for every pupil, or a school-side administrator. The
+prototype also does not require native app store
+deployment. Leaving these out was a deliberate choice
+based on what the context realistically allows.
+2.2 Social interoperability
+Social interoperability means the solution fits the
+governance structures and everyday routines already in
+place around it. CikguSync positions BPG as the owner
+of professional development and uses SGM 2.0 as the
+recognition language for teacher growth (MOE, 2023), so
+it does not introduce a new competency framework that
+teachers and administrators would need to learn
+separately. It translates what teachers already do into
+evidence that counts within an existing national standard.
+At school level, the Guru Besar receives useful
+summaries without taking on a technical administrator
+role. At the district level, PPD and JPN officers use an
+aggregated dashboard to see which schools are
+progressing, which remain effectively offline, and where
+support visits or NADI/PKG sessions should be directed
+next.
+2.3 Technical interoperability
+The prototype is standalone but built to be
+integration-ready. Data is stored using SGM 2.0 domain
+codes together with teacher and school identifiers, so
+records can later be exported or connected to DELIMa
+2.0, Program Duta Guru, UNICEF FS4A, or BPG/JPN
+reporting systems without restructuring the data model.
+The system exposes simple REST endpoints and supports
+CSV and JSON export. Full integration is not promised at
+the prototype stage because it would require formal
+agreements with MOE units and partner organisations,
+which are outside the scope of a student project.
+3. High-Level Technical Design
+Page 2 of 8
+
+-- 2 of 8 --
+
+CikguSync — Assignment 3 — Group 3
+3.1 Main concepts and class diagram
+The system has four main concept groups: users and
+organisations, learning objects, evidence and sync, and
+reporting. The UML class diagram in Figure 1 shows the
+static data structure. In the model, a Teacher completes
+CPDModule items through ModuleProgress, creates
+EvidenceSubmission items, and maps each submission to
+an SGMDomain. This lets the system connect teacher
+activity to SGM 2.0.
+When the device is offline, EvidenceSubmission items
+are held in the SyncQueue. A weekly summary then
+aggregates evidence at the school level for the school
+leader to view.
+Three design decisions in the model are important.
+First, EvidenceSubmission and SyncQueue are kept as
+separate entities. This is better than using one record with
+a status field because low-connectivity uploads may be
+retried several times. If the same evidence is uploaded
+twice, the API can use evidenceId to accept only one
+submission while still keeping retry information in the
+sync queue for troubleshooting.
+Second, ModuleProgress is separated from
+EvidenceSubmission because completing a module and
+capturing classroom evidence may happen at different
+times. A teacher might finish a module today and only
+collect classroom evidence two weeks later. These actions
+need different timestamps and different meanings in the
+audit trail.
+Third, SGMDomain is an explicit class with a domainId
+and an indicatorCode, rather than as a hard-coded string
+field. If the SGM 2.0 framework changes in the future, or
+if an additional UNESCO ICT-CFT mapping is added
+(UNESCO, 2018), the framework can be updated as data
+rather than through a major schema change.
+3.2 User interaction flow
+The main user flow in Figure 2 begins with the teacher,
+since Option 1 focuses on the rural teacher CPD loop.
+The teacher opens the PWA, downloads a module during
+a connectivity window, completes it offline, captures
+evidence, maps it to an SGM 2.0 domain, and syncs the
+submission later.
+The flow is linear. Each step represents a teacher action
+that must work without an internet connection, while
+synchronisation is delayed until connectivity becomes
+available. This matches teachers’ experience of the
+system: a sequence of ordinary teaching and CPD
+activities, with the network used only when available.
+The flow is also suitable for demonstration. The network
+can be turned off while the teacher completes the module
+and captures evidence, then turned back on to show how
+the queued submission syncs automatically.
+3.3 System architecture
+The architecture, as shown in Figure 3, has a teacher
+PWA, an intermittent connectivity layer, a Supabase
+prototype backend, and two lightweight reading views.
+The teacher PWA contains an offline cache, local
+IndexedDB storage, evidence capture, and a sync worker.
+The backend contains authentication, a relational
+database, object storage for compressed evidence images,
+REST API endpoints, and row-level security rules.
+School leaders and district officers read summaries from
+the same backend rather than maintaining separate
+spreadsheets, so reporting reflects a single source of truth.
+3.4 Offline submission and failure handling
+Offline operation is the main requirement, not an extra
+feature. Figure 4 shows the control flow. When a teacher
+submits evidence offline, the app stores the image and
+metadata locally, adds the item to the sync queue, checks
+connectivity from time to time, and uploads only when a
+connection is available. Sync must be idempotent, so
+repeated uploads of the same item do not create duplicate
+records in the dashboard.
+The design handles three common failure cases.
+First, if the network drops during upload, the item returns
+to the queue. The retry counter increases and the app
+waits longer before trying again.
+Second, if the item still fails after a set limit, for example
+ten attempts over 14 days, it is marked as failed. The
+teacher then sees a clear "tap to retry" option, so the
+record is not silently lost.
+Third, pupil privacy is protected through face blurring.
+The first version uses on-device face detection to blur
+faces before the image enters the queue. A server-side
+check runs after sync. This process should not block the
+teacher unless the image is unusable. The goal is to
+reduce risk while keeping the workflow practical in
+classrooms with low light, crowded rooms, or older
+phones.
+Multi-device conflict handling is out of scope for the first
+release because the design assumes one teacher uses one
+main device.
+4. Technology Infrastructure and Design
+Choices
+4.1 Mobile vs web-based
+CikguSync is built as a progressive web app, a website
+that behaves like an app. Teachers can open it in a
+browser, save it to their Android home screen, use it
+offline, and get updates automatically without ever
+visiting an app store. That matters because downloading
+and updating a traditional app requires things many rural
+teachers don't always have: a stable connection, a Google
+account, and a device that can handle the process
+smoothly.
+4.2 Online vs offline functionality
+The system is built to work offline first. Teachers can
+open modules they've already downloaded, complete
+Page 3 of 8
+
+-- 3 of 8 --
+
+CikguSync — Assignment 3 — Group 3
+activities, write reflections, capture evidence, and save
+their submissions, all without needing a connection.
+Android Chrome can quietly delete stored data when the
+phone runs low on space or when a user clears their
+browser, so local storage isn't treated as permanent. Think
+of it more like a working copy that can be topped up the
+next time a teacher reaches an NADI or PKG centre. A
+connection is only needed for three things: downloading
+new modules, syncing saved records, and refreshing the
+dashboard. This was a deliberate decision shaped by the
+reality on the ground in rural Sabah. When the school
+router cuts out, rain breaks the 4G signal, or a teacher
+only gets online for a few minutes a day, the system still
+needs to do its job. With somewhere between 300 and
+400 schools in Sabah still without internet access (The
+Star, 2025), building around connectivity would mean
+failing the schools that need this the most.
+4.3 Cloud vs local hosting
+Supabase is a realistic backend for the student prototype
+because it gives you authentication, Postgres tables,
+object storage, REST APIs, and row-level security, and it
+does so quickly. For a real-world public sector
+deployment, we propose to migrate the backend to
+MOE/BPG-controlled hosting or an approved Malaysian
+government cloud so that long-term ownership and
+control of teacher data is retained by the Malaysian
+education system. Supabase is useful for demonstration
+purposes; production data residency and ownership
+decisions would be made by BPG in accordance with
+MOE policy.
+4.4 Integration, voice, and text
+The first release is standalone but integration-ready. Full
+integration with DELIMa 2.0 or partner systems is
+postponed because it requires institutional access and API
+agreements. The data model, however, already uses SGM
+2.0 domains and exportable records. The core interface is
+text-first because text is easier to translate, compress,
+cache, and search. Optional short audio summaries can
+support lower-literacy users or parent-facing
+explanations, but audio is not the main interaction mode
+because it increases data use, and Sabah’s linguistic
+diversity makes reliable speech-to-text impractical
+without a custom acoustic model.
+5. Human Aspects
+5.1 Digital literacy and familiar behaviour
+The solution assumes teachers are comfortable with basic
+phone actions: opening WhatsApp, taking a photo,
+downloading a file, and checking a status icon. It does not
+assume any confidence with cloud tools or education
+platforms beyond that.
+The teacher interface uses plain labels such as "Download
+module", "Use offline", "Add evidence", "Saved on this
+phone", and "Sync when online". The school-leader
+summary is designed to feel like the WhatsApp reporting
+routines most school leaders already use. Both choices
+reduce the number of new behaviours required and lower
+the barrier to first use.
+5.2 Language accessibility
+The launch interface is available in Bahasa Malaysia and
+English. Bahasa Malaysia is the default because it is the
+national language of instruction. English covers CPD
+content and technical terms where Bahasa Malaysia
+equivalents are less established.
+Kadazandusun and Iban are supported as addable
+language packs for selected module summaries rather
+than full-system translations in the first release. Sabah's
+linguistic diversity is real, but translating the entire
+platform into all local languages is not achievable in a
+prototype. The first batch of Kadazandusun summaries
+would be co-authored with #CikguJuaraDigital Champion
+Teachers from the Interior Division (Sabah Media, 2024),
+so the content reflects how teachers in that area actually
+speak rather than a generic translation.
+5.3 Accessibility, inclusion, and workload
+Rural Sabah primary teachers are predominantly women,
+and the design takes this into account. A teacher with
+childcare or family responsibilities at home often cannot
+stay at school late to use an evening 4G window. The
+morning-download model fits her daily routine better
+than a sync that requires her to be at school after hours.
+Data costs are also a practical constraint: a 40 GB
+Celcom SIM in Sabah costs around RM35, and a single
+live webinar can exhaust the entire allowance in one
+session. Keeping module bundles under 25 MB and
+relying on image-based evidence means monthly CPD
+data use stays well below 200 MB, so professional
+development does not compete with family
+communication or pupils' homework support.
+For older teachers or those less confident with digital
+tools, the same plain labels that help new users also help
+here: "Download module", "Use offline", "Add
+evidence", "Saved on this phone", "Sync when online".
+These are paired with high contrast, large tap targets, and
+clear sync status indicators. The interface meets WCAG
+2.1 AA contrast and tap-target standards. Optional audio
+summaries support teachers with low vision and parents
+with limited literacy, and no essential information is
+conveyed through colour alone.
+Pupils are indirect beneficiaries rather than direct users.
+The data rules in Section 6 protect them: faces are blurred
+before upload, names are discouraged in reflections, and
+the first release has no pupil-facing component.
+Vulnerable pupils, including orphans, children of
+refugees from across the Indonesian border, and children
+with disabilities, are not made more visible to the
+platform than any of their peers.
+Rural teachers are also at risk of being marginalised by
+measurement systems built around online activity, which
+tend to count connected schools far more readily than
+disconnected ones. CikguSync records offline activity
+and syncs it later, so a teacher working at a school
+without internet is not logged as inactive simply because
+of where she was posted.
+6. Data Management, Privacy, and
+Accountability
+Page 4 of 8
+
+-- 4 of 8 --
+
+CikguSync — Assignment 3 — Group 3
+6.1 Data collected
+CikguSync collects only data needed for CPD access,
+evidence logging, syncing, and reporting. It does not
+collect pupil names, precise GPS coordinates, private
+family data, or unrelated teacher performance data. The
+main data groups are:
+• Teacher profile: name, school, role, and language
+for account and CPD record purposes.
+• Module progress: started/completed status and
+downloaded modules for learning continuity.
+• Evidence metadata: SGM domain, module, date,
+and short reflection for CPD recognition.
+• Evidence image: low resolution classroom photo
+with faces blurred before upload.
+• Sync metadata: queued time, synced time, retry
+count, and audit status for reliability.
+• Aggregated dashboard data: school and district
+counts for support planning and reporting.
+6.2 Storage, access, and control
+To support offline use, the records are temporarily stored
+on the teacher’s device using browser storage (e.g.,
+IndexedDB). When the internet is available, the sync
+worker uploads the records to the backend. The evidence
+images are stored separately from the metadata and are
+compressed. The device blurs faces before upload so no
+identifiable images of pupils should leave the school.
+Access is role-based. Teachers can see their own
+modules, evidence and CPD record. Guru Besar see
+school level summaries and limited teacher level progress
+if needed for support. PPD officers can see district data
+and summaries of schools. BPG and JPN get compiled
+reports and exports. Only once sharing has been
+approved, external partners can see records relevant to
+their programme.
+Data ownership should remain with MOE/BPG and the
+Malaysian public education system. Technical providers
+should act as processors under public-sector rules and
+contract limits, in line with the Personal Data Protection
+(Amendment) Act 2024.
+6.3 Misuse prevention, transparency, and
+accountability
+• Data minimisation: collect only what is needed for
+CPD recognition and support.
+• On-device anonymisation: blur pupil faces before
+upload and discourage pupil names in reflections.
+• Role-based access: apply row-level security so users
+see only appropriate records.
+• Audit logs: record when data is created, changed,
+viewed, exported, or deleted.
+• Aggregated reporting: use school and district
+summaries where individual data is not required.
+• Retention rules: keep evidence for a defined CPD
+cycle, then archive or delete according to MOE
+policy.
+Transparency. A context-aware transparency feature is
+built into the teacher interface. Each evidence item shows
+a simple "Who can see this?" label, for example Only me,
+My school leader, PPD officer, or Aggregated for BPG
+reporting. After syncing, the teacher receives a data-use
+receipt showing what was uploaded, when it was synced,
+which SGM domain it supports, and who can access it.
+Accountability. Three accountability mechanisms answer
+the question "who is responsible when something goes
+wrong?" First, audit logs are reviewed quarterly by a
+designated PPD data officer, with anomalies (mass
+exports, unusual access patterns) flagged automatically.
+Second, an anonymised summary of what data was
+collected and which partners read it is published quarterly
+on the JPN Sabah website and circulated through PIBG
+WhatsApp groups, modelled on UNICEF FS4A reporting
+practices (UNICEF Malaysia, 2024). third, each PPD
+designates a serving teacher, not an administrator, as a
+data ombudsperson. The ombudsperson receives
+complaints from peers and escalates them through JPN
+Sabah. This recognises the asymmetry between an
+individual rural teacher and a national platform, and
+adapts a governance pattern already familiar from
+community-level Native Court roles.
+7. Updated Requirements
+7.1 Requirements retained and changed
+After moving deeper into the solution domain, the core
+requirements remain valid: downloadable CPD
+micro-modules, offline completion, image-based
+evidence, queue-and-sync, SGM 2.0 mapping, a portable
+CPD record, low data use, Android compatibility, privacy
+protection, and basic school and district views. The main
+change is scope reduction. Assignment 3 selects Option 1
+as the first release and keeps mentoring only as a later or
+lightweight extension.
+• Teacher CPD: keep as the main product loop and
+prototype focus.
+• Evidence: keep image-based classroom evidence,
+with on-device face blurring and low-resolution
+upload.
+• Sync: keep queue-and-sync as the main demo
+scenario.
+• Mentoring (the focus of ContextSquaRE 2 in
+Assignment 2): deferred. The data model supports it
+through later extension of evidence submissions, but
+the prototype concentrates on the teacher CPD loop
+from ContextSquaRE 1.
+• School-leader view: keep minimal weekly summary,
+with no daily login expectation.
+• District dashboard: keep simple SGM 2.0
+dashboard and export; postpone full partner
+integration.
+• Languages: launch Bahasa Malaysia and English;
+add Kadazandusun summaries for selected modules
+later.
+• Integration: prototype is standalone but API and
+export-ready; full integrations with DELIMa, Duta
+Guru, and FS4A are postponed.
+7.2 MoSCoW priority for first release
+Must have: offline PWA shell, downloadable CPD
+modules, image evidence capture, SGM 2.0 mapping,
+sync queue, idempotent sync, teacher CPD record,
+Page 5 of 8
+
+-- 5 of 8 --
+
+CikguSync — Assignment 3 — Group 3
+Android support, data minimisation, and on-device face
+blurring.
+Should have: school weekly summary, district
+dashboard, Bahasa Malaysia and English interface, REST
+and CSV export, accessibility basics, audit log, and
+weekly digest delivery by Telegram bot or email.
+Telegram is chosen over WhatsApp because its Bot API
+is free, server-driven, and already familiar to teachers in
+the Interior who use Telegram groups for lesson sharing
+(Persona 1, Assignment 2).
+Could have: Kadazandusun summaries for selected
+modules, mentor check-in log, and partner-programme
+tags.
+Won’t have in this release: pupil-facing client, full
+external-system integration, full translation into all Sabah
+languages, live video training, or any function that
+requires continuous school internet.
+8. Conclusion
+CikguSync is a small ICT solution for teacher
+professional development in rural Sabah. The technical
+design is based on the local conditions of connectivity,
+governance structures of schools, language diversity and
+existing Malaysian education programs, rather than
+assuming technology alone solves the problem. The
+offline-first CPD loop focus means the solution works
+directly for Cikgu Liana but still gives Jainal dan
+Norhaida the summaries they need. The result is realistic
+to prototype, treats sensitive school data responsibly, and
+fits well enough in the wider education ecosystem to be
+extended after the first release.
+References
+Borneo Post. (2025a, July 24). Sabah first to implement NADI
+Ambassador to boost digital literacy.
+BSTP. (2025). DELIMa 2.0 Platform pembelajaran digital
+KPM. Bahagian Sumber dan Teknologi Pendidikan,
+Kementerian Pendidikan Malaysia.
+Jaafar, S. et al. (2025). Challenges to the professionalism of
+teachers in rural Sabah. International Journal of Research
+and Innovation in Social Science.
+JPN Sabah. (2022). Sepakat Sabah Hebat 2023–2025: Hala tuju
+pendidikan Sabah. Jabatan Pendidikan Negeri Sabah.
+Malaysia Digital Economy Corporation. (n.d.). MyDigitalMaker
+teachers training.
+Ministry of Education Malaysia. (2023). Standard Guru
+Malaysia 2.0. Bahagian Profesionalisme Guru, KPM.
+Ministry of Education Malaysia. (n.d.). Dasar Pendidikan
+Digital 2023–2030.
+Personal Data Protection Commissioner. (2024). Personal Data
+Protection (Amendment) Act 2024.
+Sabah Media. (2024, August 3). Program Jelajah Saya Digital
+perkasa ekonomi Sabah.
+The Star. (2025, December 20). Hundreds of rural schools in
+Sabah still lack internet access, says state education
+minister.
+UNESCO. (2018). UNESCO ICT Competency Framework for
+Teachers, Version 3.
+UNICEF Malaysia. (2024). UNICEF Malaysia annual report
+2024.
+Utusan Malaysia. (2025, December 30). KPM mansuh
+SPLKPM bermula tahun depan.
+Yayasan PETRONAS. (2024). Program Duta Guru.
+Page 6 of 8
+
+-- 6 of 8 --
+
+CikguSync — Assignment 3 — Group 3
+Appendix A: Figures
+Figure 1. UML class diagram showing the main static data structures of CikguSync. EvidenceSubmission and SyncQueue are
+separated to enable idempotent retries; SGMDomain is modelled as an explicit class so future framework changes can be introduced
+as data.
+Figure 3. High-level system architecture for prototype and future integration. The teacher PWA, intermittent connectivity layer,
+Supabase backend, and reading views form four loosely coupled tiers.
+Page 7 of 8
+
+-- 7 of 8 --
+
+CikguSync — Assignment 3 — Group 3
+Figure 2. Teacher user flow from module download to
+evidence sync. The flow is intentionally linear: each
+step works independently, with synchronisation deferred
+until a window opens.
+Figure 4. Control-flow sequence for offline evidence submission and later
+sync. The connectivity check is the only branching point; failure paths
+return the item to the queue with a retry counter.
+Page 8 of 8
+
+-- 8 of 8 --
+

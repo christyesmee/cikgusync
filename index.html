@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CikguSync · A4a prototype</title>
+  <link rel="icon" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root,
+    body[data-theme="light"] {
+      --cs-bg:          #F5F7FA;
+      --cs-bg2:         #EEF2F6;
+      --cs-bg3:         #E6ECF2;
+      --cs-card:        #FFFFFF;
+      --cs-card-elev:   #FFFFFF;
+      --cs-border:      #E2E7EE;
+      --cs-border-strong: #C9D2DC;
+      --cs-text:        #0F2A3D;
+      --cs-text-2:      #45607A;
+      --cs-text-3:      #7B8FA3;
+      --cs-navy:        #1F4E6D;
+      --cs-navy-dark:   #163A52;
+      --cs-navy-deep:   #0F2A3D;
+      --cs-navy-soft:   #E1ECF3;
+      --cs-teal:        #2EAAB0;
+      --cs-teal-dark:   #1F8A8F;
+      --cs-teal-soft:   #DEF3F3;
+      --cs-success:     #2C8C5F;
+      --cs-success-soft:#D9EFE3;
+      --cs-warn:        #B07A1A;
+      --cs-warn-soft:   #F7EBCD;
+      --cs-queue:       #C97E2A;
+      --cs-queue-soft:  #FAE7CE;
+      --cs-danger:      #B73B3B;
+      --cs-danger-soft: #F6D7D7;
+      --cs-shadow-1:    0 1px 2px rgba(15,42,61,0.05);
+      --cs-shadow-2:    0 6px 24px rgba(15,42,61,0.08);
+      --cs-shadow-3:    0 18px 56px rgba(15,42,61,0.12);
+      --cs-logo-shadow: 0 1px 4px rgba(15,42,61,0.12);
+    }
+    body[data-theme="dim"] {
+      --cs-bg:          #0E1A24;
+      --cs-bg2:         #122230;
+      --cs-bg3:         #16293A;
+      --cs-card:        #18293A;
+      --cs-card-elev:   #1E3245;
+      --cs-border:      #25394C;
+      --cs-border-strong: #344A60;
+      --cs-text:        #E7EEF5;
+      --cs-text-2:      #B1C0CF;
+      --cs-text-3:      #7E94A9;
+      --cs-navy:        #4FA8D8;
+      --cs-navy-dark:   #2E89BC;
+      --cs-navy-deep:   #0B1622;
+      --cs-navy-soft:   rgba(79,168,216,0.18);
+      --cs-teal:        #3EC0C6;
+      --cs-teal-dark:   #2EAAB0;
+      --cs-teal-soft:   rgba(46,170,176,0.18);
+      --cs-success:     #4EBE84;
+      --cs-success-soft:rgba(78,190,132,0.20);
+      --cs-warn:        #E0AA45;
+      --cs-warn-soft:   rgba(224,170,69,0.20);
+      --cs-queue:       #E89A4B;
+      --cs-queue-soft:  rgba(232,154,75,0.20);
+      --cs-danger:      #DD6464;
+      --cs-danger-soft: rgba(221,100,100,0.20);
+      --cs-shadow-1:    0 1px 2px rgba(0,0,0,0.30);
+      --cs-shadow-2:    0 6px 24px rgba(0,0,0,0.45);
+      --cs-shadow-3:    0 18px 56px rgba(0,0,0,0.55);
+      --cs-logo-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: var(--cs-bg);
+      color: var(--cs-text);
+      -webkit-font-smoothing: antialiased;
+    }
+    #root { min-height: 100vh; }
+    #__loading { position: fixed; bottom: 18px; right: 18px; font: 12px/1.4 'JetBrains Mono', monospace; color: var(--cs-text-3); background: var(--cs-card); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--cs-border); z-index: 10000; }
+    #__loading.hidden { display: none; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--cs-border-strong); border-radius: 6px; border: 2px solid transparent; background-clip: padding-box; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--cs-text-3); border: 2px solid transparent; background-clip: padding-box; }
+  </style>
+</head>
+<body data-theme="light">
+  <div id="root"></div>
+  <div id="__loading">loading…</div>
+
+  <script>
+    window.__resources = { logo: 'assets/logo.png' };
+  </script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+
+  <script>
+    window.React = React;
+    window.ReactDOM = ReactDOM;
+    const { useState, useEffect, useRef, useMemo, useCallback } = React;
+    window.useState = useState;
+    window.useEffect = useEffect;
+    window.useRef = useRef;
+    window.useMemo = useMemo;
+    window.useCallback = useCallback;
+  </script>
+
+  <script type="text/babel" data-presets="env,react" src="theme.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="android-frame.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="teacher.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="teacher-detail.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="screens-extra.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="leader.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="district.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="app.jsx"></script>
+
+  <script>
+    const tryHide = () => {
+      const root = document.getElementById('root');
+      if (root && root.children.length > 0) {
+        const l = document.getElementById('__loading');
+        if (l) l.classList.add('hidden');
+        return true;
+      }
+      return false;
+    };
+    let n = 0;
+    const t = setInterval(() => { if (tryHide() || ++n > 60) clearInterval(t); }, 200);
+  </script>
+</body>
+</html>
