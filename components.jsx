@@ -5,26 +5,73 @@
 // PhoneShell + StatusBar + AppHeader + BottomNav (per spec §2.1)
 // -----------------------------------------------------------------------------
 
-// PhoneShell - fixed-width mobile column centred on --surface-50, even on
-// desktop. The web build is a phone-shaped canvas (spec hard rule).
+// PhoneShell - the web build is a phone-shaped canvas (spec hard rule §2.1).
+// Wraps the app in a real mockup phone device frame: dark bezel, rounded
+// corners, side/wake buttons, dynamic-island-style camera cutout at the top.
+// On screens narrower than the device the bezel collapses so the app still
+// fills the viewport edge-to-edge (mobile users don't need a phone-in-phone).
 function PhoneShell({ children }) {
   return (
     <div style={{
-      width: '100%', maxWidth: 420, minHeight: '100vh',
-      margin: '0 auto', background: T.bg,
-      display: 'flex', flexDirection: 'column', position: 'relative',
+      minHeight: '100vh', background: T.bg,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '24px 16px', boxSizing: 'border-box',
     }}>
-      {children}
+      <div className="cs-phone" style={{
+        width: 360, height: 720,
+        background: '#111418', borderRadius: 44, padding: 10,
+        boxShadow: '0 20px 60px rgba(15,42,61,0.20), 0 4px 12px rgba(15,42,61,0.08)',
+        position: 'relative', boxSizing: 'border-box',
+        flexShrink: 0,
+      }}>
+        {/* Side buttons - decorative */}
+        <span aria-hidden style={{ position: 'absolute', left: -2, top: 110, width: 3, height: 28, background: '#0a0c0f', borderRadius: 2 }} />
+        <span aria-hidden style={{ position: 'absolute', left: -2, top: 160, width: 3, height: 44, background: '#0a0c0f', borderRadius: 2 }} />
+        <span aria-hidden style={{ position: 'absolute', left: -2, top: 220, width: 3, height: 44, background: '#0a0c0f', borderRadius: 2 }} />
+        <span aria-hidden style={{ position: 'absolute', right: -2, top: 180, width: 3, height: 64, background: '#0a0c0f', borderRadius: 2 }} />
+
+        {/* Screen */}
+        <div style={{
+          width: '100%', height: '100%',
+          background: T.bg, borderRadius: 34, overflow: 'hidden',
+          display: 'flex', flexDirection: 'column', position: 'relative',
+          boxSizing: 'border-box',
+        }}>
+          {/* Camera cutout (dynamic-island style) */}
+          <span aria-hidden style={{
+            position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
+            width: 88, height: 22, background: '#0a0c0f', borderRadius: 16, zIndex: 20,
+          }} />
+          {children}
+        </div>
+      </div>
+      <style>{`
+        @media (max-width: 480px) {
+          /* Below the phone width the bezel collapses - the app fills the
+             viewport edge-to-edge so it's still usable on real phones. */
+          .cs-phone {
+            width: 100% !important;
+            height: calc(100vh - 24px) !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+          }
+          .cs-phone > div { border-radius: 0 !important; }
+          .cs-phone > span { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }
 
 // Decorative status bar (9:41 + signal/battery glyphs). Not real time.
+// Padded around the centred camera cutout so the time + icons clear it.
 function StatusBar() {
   return (
     <div style={{
-      height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '0 24px', ...TYPE.statusBar,
+      height: 36, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 24px', paddingTop: 6, ...TYPE.statusBar,
     }}>
       <span>9:41</span>
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -340,11 +387,15 @@ function TextLink({ children, onClick }) {
 
 // -----------------------------------------------------------------------------
 // SegmentedLanguagePicker (§3.6)
+// BM + EN are full-interface languages. KDZ is partial (modules-only) and is
+// labelled as such so the teacher knows the difference. Caller can pass
+// `compact` to render the same picker in a denser form for settings.
 // -----------------------------------------------------------------------------
-function SegmentedLanguagePicker({ value, onChange }) {
+function SegmentedLanguagePicker({ value, onChange, compact }) {
   const opts = [
-    { id: 'BM', label: 'Bahasa Malaysia' },
-    { id: 'EN', label: 'English' },
+    { id: 'BM',  label: 'Bahasa Malaysia', sub: 'Full interface' },
+    { id: 'EN',  label: 'English',         sub: 'Full interface' },
+    { id: 'KDZ', label: 'Kadazandusun',    sub: 'Selected modules' },
   ];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -355,11 +406,25 @@ function SegmentedLanguagePicker({ value, onChange }) {
             background: on ? '#F0F4FB' : T.surface,
             border: on ? `1.5px solid ${T.navy}` : `1px solid ${T.line}`,
             borderRadius: R.card,
-            padding: '14px 16px',
-            cursor: 'pointer', fontFamily: 'inherit',
-            fontSize: 15, lineHeight: '20px', fontWeight: 600, color: T.ink,
-            textAlign: 'center',
-          }}>{o.label}</button>
+            padding: compact ? '10px 14px' : '12px 16px',
+            cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+            display: 'flex', alignItems: 'center', gap: 12,
+          }}>
+            <span style={{
+              width: 18, height: 18, borderRadius: '50%',
+              border: `1.5px solid ${on ? T.navy : T.line}`,
+              background: on ? T.navy : 'transparent',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              {on && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff' }} />}
+            </span>
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span style={{ display: 'block', fontSize: 14, lineHeight: '18px', fontWeight: 600, color: T.ink }}>{o.label}</span>
+              <span style={{ display: 'block', fontSize: 11, lineHeight: '14px', fontWeight: 500, color: T.ink3, marginTop: 2 }}>{o.sub}</span>
+            </span>
+            <span style={{ fontSize: 10.5, fontWeight: 600, color: T.ink3, fontFamily: 'JetBrains Mono, monospace' }}>{o.id}</span>
+          </button>
         );
       })}
     </div>

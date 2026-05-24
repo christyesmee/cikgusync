@@ -12,36 +12,36 @@ function WelcomeScreen({ s, set, go }) {
   };
   const lang = s.language || 'EN';
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px 20px' }}>
-      {/* 1. Logo block */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, marginTop: 32 }}>
-        <Logo size={88} brand />
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '16px 20px 20px', overflowY: 'auto' }}>
+      {/* 1. Logo block - tightened for the smaller phone frame */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, marginTop: 12 }}>
+        <Logo size={72} brand />
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 22, lineHeight: '28px', fontWeight: 700, color: T.ink, letterSpacing: -0.3 }}>
             CikguSync
           </div>
-          <div style={{ fontSize: 13, fontWeight: 400, color: T.ink3, marginTop: 6 }}>
+          <div style={{ fontSize: 13, fontWeight: 400, color: T.ink3, marginTop: 4 }}>
             {tx(s, 'welcomeTagline')}
           </div>
         </div>
       </div>
 
       {/* 2. Heart tagline row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 24 }}>
-        <Icon name="heart" size={16} color={T.ink2} />
-        <span style={{ fontSize: 14, fontWeight: 500, color: T.ink2 }}>{tx(s, 'welcomeSub')}</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 14 }}>
+        <Icon name="heart" size={14} color={T.ink2} />
+        <span style={{ fontSize: 13, fontWeight: 500, color: T.ink2 }}>{tx(s, 'welcomeSub')}</span>
       </div>
 
-      {/* 3. CHOOSE YOUR LANGUAGE label + 4. picker */}
-      <div style={{ marginTop: 32 }}>
-        <div style={{ ...TYPE.eyebrow, marginBottom: 12 }}>
+      {/* 3. CHOOSE YOUR LANGUAGE label + 4. picker (3 options now: BM, EN, KDZ) */}
+      <div style={{ marginTop: 20 }}>
+        <div style={{ ...TYPE.eyebrow, marginBottom: 10 }}>
           {tx(s, 'chooseLanguage')}
         </div>
-        <SegmentedLanguagePicker value={lang} onChange={setLanguage} />
+        <SegmentedLanguagePicker value={lang} onChange={setLanguage} compact />
       </div>
 
       {/* 5. Status callout */}
-      <div style={{ marginTop: 24 }}>
+      <div style={{ marginTop: 14 }}>
         <CalloutCard
           tone={s.online ? 'green' : 'peach'}
           icon={s.online ? 'cloud' : 'cloudOff'}
@@ -50,14 +50,13 @@ function WelcomeScreen({ s, set, go }) {
         />
       </div>
 
-      {/* spacer */}
-      <div style={{ flex: 1, minHeight: 16 }} />
+      <div style={{ flex: 1, minHeight: 12 }} />
 
       {/* 6. Primary CTA */}
       <PrimaryButton onClick={() => go('home')}>{tx(s, 'start')}</PrimaryButton>
 
       {/* 7. Text link */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
         <TextLink onClick={() => {}}>{tx(s, 'howItWorks')}</TextLink>
       </div>
     </div>
