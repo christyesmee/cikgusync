@@ -5,50 +5,38 @@
 // PhoneShell + StatusBar + AppHeader + BottomNav (per spec §2.1)
 // -----------------------------------------------------------------------------
 
-// PhoneShell - the web build is a phone-shaped canvas (spec hard rule §2.1).
-// Wraps the app in a real mockup phone device frame: dark bezel, rounded
-// corners, side/wake buttons, dynamic-island-style camera cutout at the top.
-// On screens narrower than the device the bezel collapses so the app still
-// fills the viewport edge-to-edge (mobile users don't need a phone-in-phone).
-function PhoneShell({ children }) {
+// PhoneFrame - mockup iPhone device chrome. Used to wrap the app for the
+// teacher and leader personas. The dark bezel, rounded corners, dynamic-
+// island cutout and side buttons are decorative. Below 480 px viewport the
+// bezel collapses so the app still fills the screen edge-to-edge.
+function PhoneFrame({ children }) {
   return (
-    <div style={{
-      minHeight: '100vh', background: T.bg,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '24px 16px', boxSizing: 'border-box',
+    <div className="cs-phone" style={{
+      width: 360, height: 720,
+      background: '#111418', borderRadius: 44, padding: 10,
+      boxShadow: '0 20px 60px rgba(15,42,61,0.20), 0 4px 12px rgba(15,42,61,0.08)',
+      position: 'relative', boxSizing: 'border-box',
+      flexShrink: 0,
     }}>
-      <div className="cs-phone" style={{
-        width: 360, height: 720,
-        background: '#111418', borderRadius: 44, padding: 10,
-        boxShadow: '0 20px 60px rgba(15,42,61,0.20), 0 4px 12px rgba(15,42,61,0.08)',
-        position: 'relative', boxSizing: 'border-box',
-        flexShrink: 0,
-      }}>
-        {/* Side buttons - decorative */}
-        <span aria-hidden style={{ position: 'absolute', left: -2, top: 110, width: 3, height: 28, background: '#0a0c0f', borderRadius: 2 }} />
-        <span aria-hidden style={{ position: 'absolute', left: -2, top: 160, width: 3, height: 44, background: '#0a0c0f', borderRadius: 2 }} />
-        <span aria-hidden style={{ position: 'absolute', left: -2, top: 220, width: 3, height: 44, background: '#0a0c0f', borderRadius: 2 }} />
-        <span aria-hidden style={{ position: 'absolute', right: -2, top: 180, width: 3, height: 64, background: '#0a0c0f', borderRadius: 2 }} />
+      <span aria-hidden style={{ position: 'absolute', left: -2, top: 110, width: 3, height: 28, background: '#0a0c0f', borderRadius: 2 }} />
+      <span aria-hidden style={{ position: 'absolute', left: -2, top: 160, width: 3, height: 44, background: '#0a0c0f', borderRadius: 2 }} />
+      <span aria-hidden style={{ position: 'absolute', left: -2, top: 220, width: 3, height: 44, background: '#0a0c0f', borderRadius: 2 }} />
+      <span aria-hidden style={{ position: 'absolute', right: -2, top: 180, width: 3, height: 64, background: '#0a0c0f', borderRadius: 2 }} />
 
-        {/* Screen */}
-        <div style={{
-          width: '100%', height: '100%',
-          background: T.bg, borderRadius: 34, overflow: 'hidden',
-          display: 'flex', flexDirection: 'column', position: 'relative',
-          boxSizing: 'border-box',
-        }}>
-          {/* Camera cutout (dynamic-island style) */}
-          <span aria-hidden style={{
-            position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
-            width: 88, height: 22, background: '#0a0c0f', borderRadius: 16, zIndex: 20,
-          }} />
-          {children}
-        </div>
+      <div style={{
+        width: '100%', height: '100%',
+        background: T.bg, borderRadius: 34, overflow: 'hidden',
+        display: 'flex', flexDirection: 'column', position: 'relative',
+        boxSizing: 'border-box',
+      }}>
+        <span aria-hidden style={{
+          position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
+          width: 88, height: 22, background: '#0a0c0f', borderRadius: 16, zIndex: 20,
+        }} />
+        {children}
       </div>
       <style>{`
         @media (max-width: 480px) {
-          /* Below the phone width the bezel collapses - the app fills the
-             viewport edge-to-edge so it's still usable on real phones. */
           .cs-phone {
             width: 100% !important;
             height: calc(100vh - 24px) !important;
@@ -61,6 +49,54 @@ function PhoneShell({ children }) {
           .cs-phone > span { display: none !important; }
         }
       `}</style>
+    </div>
+  );
+}
+
+// BrowserFrame - mockup macOS-style browser chrome for the district desktop
+// view. Traffic-light buttons + URL bar + content area. Used for Norhaida
+// because her dashboard is a desktop product, not a phone.
+function BrowserFrame({ url = 'https://cikgusync.moe.gov.my/ppd/keningau', children }) {
+  return (
+    <div style={{
+      width: '100%', maxWidth: 1080, height: 720,
+      background: T.surface, border: `1px solid ${T.line}`, borderRadius: 14,
+      boxShadow: '0 20px 60px rgba(15,42,61,0.18), 0 4px 12px rgba(15,42,61,0.06)',
+      display: 'flex', flexDirection: 'column', overflow: 'hidden',
+    }}>
+      <div style={{
+        background: T.surface2, padding: '10px 14px',
+        borderBottom: `1px solid ${T.line}`,
+        display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
+      }}>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {['#ED6A5E','#F5BF4F','#62C554'].map(c => (
+            <span key={c} style={{ width: 11, height: 11, borderRadius: '50%', background: c }} />
+          ))}
+        </div>
+        <div style={{
+          flex: 1, background: T.surface, borderRadius: 7,
+          padding: '6px 12px', fontSize: 12, color: T.ink3,
+          fontFamily: 'JetBrains Mono, monospace',
+          border: `1px solid ${T.line}`,
+        }}>{url}</div>
+      </div>
+      <div style={{ flex: 1, minHeight: 0, overflow: 'auto', position: 'relative' }}>{children}</div>
+    </div>
+  );
+}
+
+// PhoneShell - legacy wrapper kept so any old call site keeps working. New
+// app.jsx renders PhoneFrame / BrowserFrame directly so it can lay out the
+// page (phone on left, demo panel on right) without nested layout overrides.
+function PhoneShell({ children }) {
+  return (
+    <div style={{
+      minHeight: '100vh', background: T.bg,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '24px 16px', boxSizing: 'border-box',
+    }}>
+      <PhoneFrame>{children}</PhoneFrame>
     </div>
   );
 }
@@ -703,7 +739,8 @@ function ScreenBody({ children, padTop = 16 }) {
 }
 
 Object.assign(window, {
-  PhoneShell, StatusBar, AppHeader, BottomNav,
+  PhoneShell, PhoneFrame, BrowserFrame,
+  StatusBar, AppHeader, BottomNav,
   OnlinePill, StatCard, HeroCard, HeroInner, CompactHero,
   ModuleCard, PillButton, ProgressBarRow,
   PrimaryButton, OutlineButton, TextLink,

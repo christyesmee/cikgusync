@@ -138,7 +138,6 @@ function App() {
   });
   const [persona, setPersona] = useState('teacher');
   const [tab, setTab] = useState('welcome');
-  const [demoOpen, setDemoOpen] = useState(false);
 
   useEffect(() => {
     document.body.dataset.theme = 'light';
@@ -178,154 +177,168 @@ function App() {
   })[tab];
   const showNav = persona === 'teacher' && navActive !== undefined;
 
-  return (
-    <div style={{ minHeight: '100vh', background: T.bg }}>
-      <PhoneShell>
-        <StatusBar />
-
-        {persona === 'teacher' && tab === 'welcome'         && <WelcomeScreen        s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'home'            && <HomeScreen           s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'modules'         && <ModulesScreen        s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'module'          && <ModuleDetailScreen   s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'add'             && <CaptureScreen        s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'sync'            && <SyncQueueScreen      s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'record'          && <RecordScreen         s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'profile'         && <ProfileScreen        s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'edge-blocked'    && <EdgeCaseScreen kind="blocked"      s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'edge-upload'     && <EdgeCaseScreen kind="uploadFailed" s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'edge-incomplete' && <EdgeCaseScreen kind="incomplete"   s={s} set={set} go={go} />}
-        {persona === 'teacher' && tab === 'edge-storage'    && <EdgeCaseScreen kind="storage"      s={s} set={set} go={go} />}
-
-        {persona === 'leader'   && <SchoolSummaryScreen     s={s} set={set} go={go} />}
-        {persona === 'district' && <DistrictDashboardScreen s={s} set={set} go={go} />}
-
-        {showNav && <BottomNav active={navActive} onNavigate={go} s={s} />}
-      </PhoneShell>
-
-      <DemoDock persona={persona} setPersona={(p) => { setPersona(p); setTab(p === 'teacher' ? 'home' : p === 'leader' ? 'school' : 'district'); }}
-        online={s.online} toggleOnline={() => set(p => ({ ...p, online: !p.online }))}
-        onOpenPanel={() => setDemoOpen(true)} />
-
-      {demoOpen && <DemoPanelOverlay s={s} set={set} go={go} close={() => setDemoOpen(false)} />}
-    </div>
-  );
-}
-
-// -----------------------------------------------------------------------------
-// DemoDock - small floating control in the bottom-right of the page (outside
-// the phone column). Lets the demo operator switch persona, toggle online,
-// and open the full demo panel. Not part of the spec - it's a meta-tool.
-// -----------------------------------------------------------------------------
-function DemoDock({ persona, setPersona, online, toggleOnline, onOpenPanel }) {
-  return (
-    <div style={{
-      position: 'fixed', bottom: 16, right: 16, zIndex: 50,
-      display: 'flex', alignItems: 'center', gap: 8,
-      background: T.surface, border: `1px solid ${T.line}`, borderRadius: R.pill,
-      padding: 6, boxShadow: '0 4px 16px rgba(15,42,61,0.10)',
-      fontFamily: 'inherit',
-    }}>
-      {[
-        { id: 'teacher',  label: 'Liana',    icon: 'user' },
-        { id: 'leader',   label: 'Jainal',   icon: 'school' },
-        { id: 'district', label: 'Norhaida', icon: 'map' },
-      ].map(p => {
-        const on = persona === p.id;
-        return (
-          <button key={p.id} onClick={() => setPersona(p.id)} style={{
-            background: on ? T.navy : 'transparent', color: on ? '#fff' : T.ink2,
-            border: 'none', padding: '6px 10px', borderRadius: R.pill,
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-          }}>
-            <Icon name={p.icon} size={14} stroke={on ? 2 : 1.6} />
-            {p.label}
-          </button>
-        );
-      })}
-      <div style={{ width: 1, height: 18, background: T.line }} />
-      <button onClick={toggleOnline} style={{
-        background: 'transparent', border: 'none', cursor: 'pointer', padding: 4,
-      }}>
-        <OnlinePill online={online} />
-      </button>
-      <button onClick={onOpenPanel} aria-label="Open demo panel" style={{
-        background: 'transparent', border: 'none', color: T.ink2,
-        padding: 6, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <Icon name="info" size={18} />
-      </button>
-    </div>
-  );
-}
-
-// -----------------------------------------------------------------------------
-// DemoPanelOverlay - overlay containing Scenarios, Edge cases, Requirements,
-// Contributions, Intro. Opens when DemoDock 'info' is clicked.
-// -----------------------------------------------------------------------------
-function DemoPanelOverlay({ s, set, go, close }) {
+  // Demo panel control state (kept lifted here so scenario buttons can
+  // drive navigation in the main stage).
   const [panel, setPanel] = useState('scenarios');
   const [activeScenario, setActiveScenario] = useState('s1');
   const [stepIdx, setStepIdx] = useState(0);
   const sc = SCENARIOS.find(x => x.id === activeScenario) || SCENARIOS[0];
-
   const runStep = (scen, i) => {
     setActiveScenario(scen.id);
     setStepIdx(i);
-    const step = scen.steps[i];
-    if (scen.persona === 'teacher')      go(step.tab);
-    else if (scen.persona === 'leader')   go(step.tab); // 'school'
-    else if (scen.persona === 'district') go(step.tab); // 'district'
+    go(scen.steps[i].tab);
+  };
+  // Persona switcher in the demo top bar.
+  const switchPersona = (p) => {
+    setPersona(p);
+    if (p === 'teacher')      setTab('home');
+    else if (p === 'leader')   setTab('school');
+    else                       setTab('district');
   };
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 100,
-      background: 'rgba(15,42,61,0.35)',
-      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-    }} onClick={close}>
-      <div onClick={e => e.stopPropagation()} style={{
-        width: '100%', maxWidth: 540, maxHeight: '90vh',
-        background: T.surface, borderRadius: '20px 20px 0 0',
-        display: 'flex', flexDirection: 'column', overflow: 'hidden',
+      minHeight: '100vh', background: T.bg,
+      display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px',
+    }}>
+      {/* Stage - phone for teacher/leader, browser for district. */}
+      <Stage
+        persona={persona} tab={tab} s={s} set={set} go={go}
+        showNav={showNav} navActive={navActive}
+      />
+
+      {/* Right-side Demo panel, always visible (~380 px wide). */}
+      <DemoPanel
+        s={s} set={set} go={go}
+        persona={persona} switchPersona={switchPersona}
+        online={s.online} toggleOnline={() => set(p => ({ ...p, online: !p.online }))}
+        panel={panel} setPanel={setPanel}
+        sc={sc} stepIdx={stepIdx} runStep={runStep}
+      />
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// Stage - the left half of the page. Wraps the active screen in the right
+// device chrome (PhoneFrame for teacher / leader, BrowserFrame for district).
+// -----------------------------------------------------------------------------
+function Stage({ persona, tab, s, set, go, showNav, navActive }) {
+  const teacherScreen = (
+    <>
+      <StatusBar />
+      {tab === 'welcome'         && <WelcomeScreen        s={s} set={set} go={go} />}
+      {tab === 'home'            && <HomeScreen           s={s} set={set} go={go} />}
+      {tab === 'modules'         && <ModulesScreen        s={s} set={set} go={go} />}
+      {tab === 'module'          && <ModuleDetailScreen   s={s} set={set} go={go} />}
+      {tab === 'add'             && <CaptureScreen        s={s} set={set} go={go} />}
+      {tab === 'sync'            && <SyncQueueScreen      s={s} set={set} go={go} />}
+      {tab === 'record'          && <RecordScreen         s={s} set={set} go={go} />}
+      {tab === 'profile'         && <ProfileScreen        s={s} set={set} go={go} />}
+      {tab === 'edge-blocked'    && <EdgeCaseScreen kind="blocked"      s={s} set={set} go={go} />}
+      {tab === 'edge-upload'     && <EdgeCaseScreen kind="uploadFailed" s={s} set={set} go={go} />}
+      {tab === 'edge-incomplete' && <EdgeCaseScreen kind="incomplete"   s={s} set={set} go={go} />}
+      {tab === 'edge-storage'    && <EdgeCaseScreen kind="storage"      s={s} set={set} go={go} />}
+      {showNav && <BottomNav active={navActive} onNavigate={go} s={s} />}
+    </>
+  );
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: 24, minHeight: '100vh', boxSizing: 'border-box',
+    }}>
+      {persona === 'teacher'  && <PhoneFrame>{teacherScreen}</PhoneFrame>}
+      {persona === 'leader'   && <PhoneFrame>
+        <StatusBar />
+        <LeaderApp s={s} go={go} />
+      </PhoneFrame>}
+      {persona === 'district' && <BrowserFrame><DistrictApp s={s} /></BrowserFrame>}
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// DemoPanel - fixed-width right column with persona switcher + online toggle
+// at the top, then tabbed content (Scenarios / Edge cases / Requirements /
+// Contributions / Intro).
+// -----------------------------------------------------------------------------
+function DemoPanel({ s, set, go, persona, switchPersona, online, toggleOnline,
+                     panel, setPanel, sc, stepIdx, runStep }) {
+  return (
+    <div style={{
+      background: T.surface, borderLeft: `1px solid ${T.line}`,
+      display: 'flex', flexDirection: 'column', minHeight: '100vh', maxHeight: '100vh',
+      position: 'sticky', top: 0,
+    }}>
+      {/* Persona + online toggle bar */}
+      <div style={{
+        padding: '12px 14px', borderBottom: `1px solid ${T.line}`,
+        display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap',
       }}>
-        <div style={{
-          display: 'flex', alignItems: 'center',
-          padding: '12px 16px', borderBottom: `1px solid ${T.line}`,
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Logo size={28} brand />
+          <div style={{ fontSize: 13, fontWeight: 700, color: T.ink }}>CikguSync</div>
+        </div>
+        <div style={{ flex: 1 }} />
+        <button onClick={toggleOnline} aria-label="Toggle online" style={{
+          background: 'transparent', border: 'none', padding: 0, cursor: 'pointer',
         }}>
-          <div style={{ ...TYPE.cardTitle, flex: 1 }}>Demo</div>
-          <button onClick={close} aria-label="Close" style={{
-            width: 32, height: 32, border: 'none', background: 'transparent', color: T.ink2,
-            cursor: 'pointer',
-          }}><Icon name="close" size={18} /></button>
-        </div>
-        <div style={{ display: 'flex', borderBottom: `1px solid ${T.line}`, overflowX: 'auto' }}>
-          {[
-            { id: 'scenarios',    label: 'Scenarios' },
-            { id: 'edges',        label: 'Edge cases' },
-            { id: 'requirements', label: 'Requirements' },
-            { id: 'team',         label: 'Contributions' },
-            { id: 'intro',        label: 'Intro' },
-          ].map(t => {
-            const active = panel === t.id;
-            return (
-              <button key={t.id} onClick={() => setPanel(t.id)} style={{
-                flex: '0 0 auto', border: 'none', background: 'transparent',
-                padding: '12px 16px', fontSize: 13, fontWeight: 600,
-                color: active ? T.navy : T.ink3, cursor: 'pointer',
-                fontFamily: 'inherit',
-                borderBottom: active ? `2px solid ${T.navy}` : '2px solid transparent',
-              }}>{t.label}</button>
-            );
-          })}
-        </div>
-        <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
-          {panel === 'scenarios'    && <ScenariosPanel sc={sc} stepIdx={stepIdx} runStep={runStep} />}
-          {panel === 'edges'        && <EdgesPanel />}
-          {panel === 'requirements' && <RequirementsPanel />}
-          {panel === 'team'         && <TeamPanel />}
-          {panel === 'intro'        && <IntroPanel />}
-        </div>
+          <OnlinePill online={online} />
+        </button>
+      </div>
+      <div style={{
+        padding: '8px 14px', borderBottom: `1px solid ${T.line}`,
+        display: 'flex', gap: 4,
+      }}>
+        {[
+          { id: 'teacher',  label: 'Liana',    sub: 'Teacher',  icon: 'user' },
+          { id: 'leader',   label: 'Jainal',   sub: 'Leader',   icon: 'school' },
+          { id: 'district', label: 'Norhaida', sub: 'District', icon: 'map' },
+        ].map(p => {
+          const on = persona === p.id;
+          return (
+            <button key={p.id} onClick={() => switchPersona(p.id)} style={{
+              flex: 1, border: 'none',
+              background: on ? T.navy : T.surface2,
+              color:      on ? '#fff' : T.ink2,
+              padding: '8px 6px', borderRadius: 10, cursor: 'pointer', fontFamily: 'inherit',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+            }}>
+              <Icon name={p.icon} size={14} stroke={on ? 2 : 1.6} />
+              <span style={{ fontSize: 11.5, fontWeight: 700 }}>{p.label}</span>
+              <span style={{ fontSize: 9.5, fontWeight: 500, opacity: 0.8 }}>{p.sub}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Panel tabs */}
+      <div style={{ display: 'flex', borderBottom: `1px solid ${T.line}`, overflowX: 'auto' }}>
+        {[
+          { id: 'scenarios',    label: 'Scenarios' },
+          { id: 'edges',        label: 'Edges' },
+          { id: 'requirements', label: 'Requirements' },
+          { id: 'team',         label: 'Contributions' },
+          { id: 'intro',        label: 'Intro' },
+        ].map(t => {
+          const active = panel === t.id;
+          return (
+            <button key={t.id} onClick={() => setPanel(t.id)} style={{
+              flex: '1 0 auto', border: 'none', background: 'transparent',
+              padding: '10px 8px', fontSize: 12, fontWeight: 700,
+              color: active ? T.navy : T.ink3, cursor: 'pointer',
+              fontFamily: 'inherit',
+              borderBottom: active ? `2px solid ${T.navy}` : '2px solid transparent',
+            }}>{t.label}</button>
+          );
+        })}
+      </div>
+      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: 14 }}>
+        {panel === 'scenarios'    && <ScenariosPanel sc={sc} stepIdx={stepIdx} runStep={runStep} />}
+        {panel === 'edges'        && <EdgesPanel />}
+        {panel === 'requirements' && <RequirementsPanel />}
+        {panel === 'team'         && <TeamPanel />}
+        {panel === 'intro'        && <IntroPanel />}
       </div>
     </div>
   );
