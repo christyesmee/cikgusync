@@ -123,11 +123,13 @@ function SyncQueueScreen({ s, set, go }) {
   ];
 
   const syncAll = () => {
-    if (!s.online) {
-      set(p => ({ ...p, toast: tx(s, 'needConnection') }));
-      setTimeout(() => set(p => ({ ...p, toast: null })), 2400);
+    // Offline + queued items -> show Upload failed edge case screen
+    // (Figure 4 panel 2). Evidence stays safe on the phone, will retry.
+    if (!s.online && queued.length > 0) {
+      go('edge-upload');
       return;
     }
+    if (queued.length === 0) return;
     // animate queued items to synced
     queued.forEach((e, i) => setTimeout(() => {
       set(p => ({
@@ -140,14 +142,17 @@ function SyncQueueScreen({ s, set, go }) {
   };
 
   const retryOne = (id) => {
+    if (!s.online) {
+      // Trying to retry one item while still offline -> Upload failed screen.
+      go('edge-upload');
+      return;
+    }
     set(p => ({
       ...p,
       evidence: p.evidence.map(x => x.id === id
-        ? (s.online
-            ? { ...x, synced: true, syncedAt: '14 May 09:31', retry: 0 }
-            : { ...x, retry: (x.retry || 0) + 1 })
+        ? { ...x, synced: true, syncedAt: '14 May 09:31', retry: 0 }
         : x),
-      toast: s.online ? tx(s, 'syncing') : tx(s, 'needConnection'),
+      toast: tx(s, 'syncing'),
     }));
     setTimeout(() => set(p => ({ ...p, toast: null })), 2200);
   };
@@ -294,6 +299,15 @@ const EDGE_DEFS = {
 
 function EdgeCaseScreen({ kind, s, set, go }) {
   const def = EDGE_DEFS[kind] || EDGE_DEFS.blocked;
+  // For incomplete-evidence, if CaptureScreen.submit attached real issues,
+  // show those concrete strings; otherwise show the generic three.
+  const dynamicIssues = kind === 'incomplete' && s.edgeIssues && s.edgeIssues.length > 0
+    ? s.edgeIssues
+    : null;
+  const goAndClear = (target) => {
+    if (kind === 'incomplete') set(p => ({ ...p, edgeIssues: null }));
+    go(target);
+  };
   return (
     <div style={{
       minHeight: '100%', display: 'flex', flexDirection: 'column',
@@ -316,17 +330,17 @@ function EdgeCaseScreen({ kind, s, set, go }) {
           </div>
         </div>
 
-        {def.issues && (
+        {(def.issues || dynamicIssues) && (
           <div style={{
             width: '100%', background: T.card, border: `1px solid ${T.border}`,
             borderRadius: 12, padding: '12px 14px', textAlign: 'left',
             boxShadow: T.shadow1,
           }}>
             <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {def.issues.map(k => (
-                <li key={k} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12, color: T.text, lineHeight: 1.5 }}>
+              {(dynamicIssues || def.issues.map(k => tx(s, k))).map((text, i) => (
+                <li key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12, color: T.text, lineHeight: 1.5 }}>
                   <Dot color={def.tone} size={6} style={{ marginTop: 7, flexShrink: 0 }} />
-                  <span>{tx(s, k)}</span>
+                  <span>{text}</span>
                 </li>
               ))}
             </ul>
@@ -344,11 +358,11 @@ function EdgeCaseScreen({ kind, s, set, go }) {
 
       {/* Actions */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 12 }}>
-        <button onClick={() => go(def.primaryGo)} style={{
+        <button onClick={() => goAndClear(def.primaryGo)} style={{
           ...btnPrimary, padding: '14px', fontSize: 14,
           background: T.navyDeep,
         }}>{tx(s, def.primaryK)}</button>
-        <button onClick={() => go(def.secondaryGo)} style={{
+        <button onClick={() => goAndClear(def.secondaryGo)} style={{
           background: 'transparent', border: 'none', color: T.navy,
           padding: '10px', fontSize: 12.5, fontWeight: 600,
           cursor: 'pointer', fontFamily: 'inherit',

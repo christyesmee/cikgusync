@@ -341,7 +341,7 @@ function ModulesScreen({ s, set, go }) {
         {filtered.map(m => (
           <ModuleRow key={m.id} mod={m}
             onOpen={() => { set(p => ({ ...p, openModule: m.id })); go('module'); }}
-            onDownload={() => downloadModule(m.id, set, s)}
+            onDownload={() => downloadModule(m.id, set, s, go)}
             s={s}
           />
         ))}
@@ -370,10 +370,18 @@ function FilterChips({ value, setValue, options }) {
   );
 }
 
-function downloadModule(id, set, s) {
+function downloadModule(id, set, s, goEdge) {
+  // 1. Offline -> show the Download blocked edge case (Figure 4 panel 1).
   if (!s.online) {
-    set(p => ({ ...p, toast: tx(s, 'needConnection') }));
-    setTimeout(() => set(p => ({ ...p, toast: null })), 2800);
+    if (goEdge) goEdge('edge-blocked');
+    return;
+  }
+  // 2. Already downloaded a bunch -> simulate "storage low" before downloading
+  //    another (Figure 4 panel 4). The threshold of 2 keeps the demo realistic
+  //    with the seed data (2 modules already in the downloaded/completed state).
+  const downloadedCount = s.modules.filter(m => m.state === 'downloaded' || m.state === 'completed').length;
+  if (downloadedCount >= 2) {
+    if (goEdge) goEdge('edge-storage');
     return;
   }
   set(p => ({ ...p, modules: p.modules.map(m => m.id === id ? { ...m, state: 'downloading', progress: 0 } : m) }));

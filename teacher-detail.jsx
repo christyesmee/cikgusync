@@ -235,9 +235,18 @@ function CaptureScreen({ s, set, go }) {
   ] : VISIBILITY_OPTIONS;
 
   const submit = () => {
-    if (!photo)                    { setError(tx(s, 'capturePhotoFirst')); return; }
-    if (!domain)                   { setError(tx(s, 'tagDomainError')); return; }
-    if (note.trim().length < 8)    { setError(tx(s, 'reflectionError')); return; }
+    // Build list of validation issues. If any are present, route to the
+    // Incomplete-evidence edge case screen (Figure 4 panel 3) with the
+    // specific issues attached, instead of the small inline error banner.
+    const issues = [];
+    if (!photo)                  issues.push(tx(s, 'capturePhotoFirst'));
+    if (!domain)                 issues.push(tx(s, 'tagDomainError'));
+    if (note.trim().length < 10) issues.push(tx(s, 'reflectionError'));
+    if (issues.length > 0) {
+      set(p => ({ ...p, edgeIssues: issues }));
+      go('edge-incomplete');
+      return;
+    }
     setError(null);
     const newEv = {
       id: 'EV-' + Math.floor(1000 + Math.random()*9000),
